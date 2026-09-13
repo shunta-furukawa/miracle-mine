@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "Miracle Mine",
+  "short_name": "Miracle Mine",
+  "description": "数字をつないで、自分だけの蒸気飛行機を。無料の冒険パズル。",
+  "lang": "ja",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#143f43",
+  "theme_color": "#143f43",
+  "categories": ["games", "education"],
+  "icons": [
+    {"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

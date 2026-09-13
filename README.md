@@ -42,3 +42,11 @@ Run `npm test` for the puzzle rules, initial solvability and save validation.
 ## Art
 
 `src/assets/` contains original generated artwork approved for this project. The stone atlas is displayed using CSS sprite coordinates. No external asset URLs or paid runtime services are required.
+
+## Home-screen app (PWA)
+
+Use Safari → Share → Add to Home Screen on iPhone/iPad, or the browser install action on Android/desktop. The manifest requests standalone display and landscape orientation; platform support determines orientation behavior. Icons include Apple 180px, standard 192/512px, and a separately padded maskable 512px asset.
+
+The build generates a content-versioned service worker which atomically precaches the complete game for offline use after the first successful online load. Updates wait; a title-screen button activates them without automatically reloading during play. No save keys are changed. iOS may keep home-screen app storage separate from Safari storage.
+
+Icon artwork was generated specifically for Miracle Mine; raster exports are packaged in `src/icons/`.

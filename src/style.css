@@ -10,3 +10,5 @@ dialog{border:3px solid #b68d49;padding:0;border-radius:16px;color:#392919;backg
 
 @media(max-height:600px) and (orientation:landscape){.guardian{clip-path:ellipse(48% 37% at 50% 38%)}}
 body:before{z-index:0}#app{position:relative;z-index:1}
+
+html{overscroll-behavior:none}body[data-screen="game"]{overscroll-behavior:none}.installed .install-button{display:none}#app-update{display:none;position:fixed;right:max(16px,env(safe-area-inset-right));top:max(16px,env(safe-area-inset-top));z-index:3;background:#fff2d0;font-size:13px}body[data-screen="title"] #app-update{display:block}@media(max-width:700px){.title-bottom{flex-wrap:wrap}.title-bottom>span{font-size:9px}.title-bottom .install-button{font-size:11px;padding:8px}}
