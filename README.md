@@ -50,3 +50,9 @@ Use Safari → Share → Add to Home Screen on iPhone/iPad, or the browser insta
 The build generates a content-versioned service worker which atomically precaches the complete game for offline use after the first successful online load. Updates wait; a title-screen button activates them without automatically reloading during play. No save keys are changed. iOS may keep home-screen app storage separate from Safari storage.
 
 Icon artwork was generated specifically for Miracle Mine; raster exports are packaged in `src/icons/`.
+
+## Story conversations (0.3)
+
+`src/story.js` defines the prologue, 30 pre-stage conversations, five chapter rewards, and first-flight ending. Stage objectives are taken from `data.js`. `dialogue.js` renders native text with typewriter reveal, speaker emphasis, Luka speaking/listening poses, keyboard/touch advance and skip. Reduced-motion users see complete text immediately. The game remains paused throughout each scene. The map's 「はじまりの物語」 replays the prologue for existing saves.
+
+The cast and six environment atlases are original generated assets stored in `src/assets/dialogue-*.webp`; they are included in the offline cache automatically. Portrait motion is a lightweight speaking gesture, not audio-driven lip sync. Asset generation used the built-in image tool with the approved character sheet and Fuu mockup as references: an eight-cell conversational portrait atlas (Luka speaking, Toto, Mos, Shell, Krim, Flare, Fuu, Luka listening) and a six-cell scenery atlas (workshop, forest, harbor, cavern, forge, sky). The final portrait background is white and composited with CSS multiply over a pale scenery wash.

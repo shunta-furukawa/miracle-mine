@@ -3,7 +3,7 @@ export const chapters=[
  {name:'潮風の入り江',tag:'OCEAN',material:'潮に強い合金',part:'胴体と尾翼',guardian:'シェル',color:'#409cad',intro:'港のポンプに力が足りないんだ。8のエネルギーを集めてほしいな。',end:'港が元気になったよ！ この合金を飛行機に使ってね。'},
  {name:'ひびきの洞窟',tag:'CAVERN',material:'蓄光結晶',part:'計器と動力の核',guardian:'クリム',color:'#8b74b8',intro:'奥の坑道がまっくら。10の光で、みんなの帰り道を照らそう。',end:'洞窟に明かりが戻った！ この結晶は、空でもきっと役立つよ。'},
  {name:'火山の鍛冶場',tag:'VOLCANO',material:'耐熱金属',part:'ボイラーとプロペラ',guardian:'フレア',color:'#ca6b3c',intro:'大きな炉を動かすには、掛け算の力が必要だ。「×」を試してみて！',end:'炉が動いた！ 熱に強いボイラーで、どこまでも飛んでいけるよ。'},
- {name:'雲へ続く高原',tag:'SKY',material:'飛行用パーツ',part:'最後の飛行装置',guardian:'トトじい',color:'#74adbd',intro:'いよいよ試験飛行じゃ。足し算で準備して、掛け算で大きな力を作ろう。',end:'よくやった、ルカ。さあ、一緒に雲の向こうを見にいこう！'}
+ {name:'雲へ続く高原',tag:'SKY',material:'飛行用パーツ',part:'最後の飛行装置',guardian:'フウ',color:'#74adbd',intro:'空の道しるべをつけよう！ 足し算と掛け算で、灯りをつないでね。',end:'空への道がつながったよ！ おじいちゃんを迎えにいこう！'}
 ];
 const names=['はじめの一歩','小さな発見','つなぐ工夫','新しいひらめき','力をあわせて','守り手のお願い'];
 export const stages=Array.from({length:30},(_,id)=>{
