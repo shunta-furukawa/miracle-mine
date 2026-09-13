@@ -60,3 +60,7 @@ The cast and six environment atlases are original generated assets stored in `sr
 ## Chapter presentation (0.4)
 
 `src/chapter-scenes.js` adds a full-field title card before each chapter's first-stage conversation. Completing the sixth stage saves progress immediately and opens a chapter-clear celebration with the awarded airplane part and collection progress. Continue leads directly into the next chapter's title, then its conversation and puzzle; the final chapter leads to the first-flight conversation. The reward screen includes the guardian's closing message instead of an additional dialogue/result sequence. Replaying a chapter's first stage also replays its title. Every transition is explicitly advanced, keeps gameplay paused, traps focus in a native dialog, and respects reduced motion. Backgrounds reuse the locally cached scenery atlas.
+
+## Delete a save slot
+
+Occupied slots have a separate 「データを消す」 button. The confirmation names the workshop and displays its stage/part progress, with Cancel focused by default. Confirming removes only that story slot; other slots, high scores and settings remain. Storage is updated before the UI reports success. A failed write keeps the existing save and displays an error in the dialog; if that record changed after confirmation opened, deletion is cancelled and the user is asked to review it again.
