@@ -64,3 +64,7 @@ The cast and six environment atlases are original generated assets stored in `sr
 ## Delete a save slot
 
 Occupied slots have a separate 「データを消す」 button. The confirmation names the workshop and displays its stage/part progress, with Cancel focused by default. Confirming removes only that story slot; other slots, high scores and settings remain. Storage is updated before the UI reports success. A failed write keeps the existing save and displays an error in the dialog; if that record changed after confirmation opened, deletion is cancelled and the user is asked to review it again.
+
+## Fullscreen home-screen launch
+
+The manifest requests `display: fullscreen` to hide system/browser chrome where supported (for example Android Chromium). Unsupported environments fall back to standalone display. PWA detection handles both fullscreen and standalone. iOS's existing `black-translucent` status-bar styling is retained; it is not a switch that hides clock/battery indicators. Actual system-bar visibility is controlled by the OS/browser and must be verified on the device. Existing installs may apply manifest changes later than the app's service-worker update; close and reopen after updating without clearing saved data.

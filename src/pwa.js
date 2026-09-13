@@ -1,8 +1,9 @@
 let installEvent = null;
-const installed = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const appDisplayModes = ['standalone', 'fullscreen'].map(mode => window.matchMedia(`(display-mode: ${mode})`));
+const installed = () => appDisplayModes.some(mode => mode.matches) || navigator.standalone === true;
 function markInstalled() { document.documentElement.classList.toggle('installed', installed()); }
 markInstalled();
-window.matchMedia('(display-mode: standalone)').addEventListener('change', markInstalled);
+for (const mode of appDisplayModes) mode.addEventListener('change', markInstalled);
 window.addEventListener('beforeinstallprompt', event => {
   event.preventDefault();
   installEvent = event;
