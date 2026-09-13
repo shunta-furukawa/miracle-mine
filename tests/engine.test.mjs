@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {evaluate,resolve,extend,createBoard,solution} from '../src/engine.js';
+import {stages} from '../src/data.js';
+import {normalize} from '../src/save.js';
+test('exact target takes priority over 10+ clearing',()=>{let b=Array(25).fill(1);b[0]=6;b[1]=6;assert.equal(evaluate(b,[0,1],'×',36).kind,'success');b[0]=4;assert.equal(evaluate(b,[0,1],'+',10).kind,'success');});
+test('merge and gravity preserve one digit at endpoint column',()=>{let b=Array(25).fill(5);b[20]=1;b[21]=1;b[22]=2;const r=resolve(b,[20,21,22],'+',6,()=>0);assert.equal(r.kind,'merge');assert.equal(r.board[22],4);assert.equal(r.board[20],5);assert.equal(r.board[0],0);assert.equal(r.board.length,25);});
+test('discard does not count as success; zero multiplication merges to zero',()=>{let b=Array(25).fill(7);assert.equal(evaluate(b,[0,1],'+',36).kind,'clear');assert.equal(evaluate(b,[0,1],'+',6).kind,'clear');b[0]=0;const r=resolve(b,[0,1],'×',36,()=>1);assert.equal(r.kind,'merge');assert.equal(r.value,0);});
+test('tracing supports diagonal, backtracking, prevents reuse and invalid paths',()=>{assert.deepEqual(extend([0],6),[0,6]);assert.deepEqual(extend([0,1,6],1),[0,1]);assert.deepEqual(extend([0,1,6],0),[0,1,6]);assert.deepEqual(extend([4],5),[4]);assert.equal(evaluate(Array(25).fill(3),[0,24],'+',6).kind,'cancel');});
+test('all 30 initial boards have a reachable goal and legal spawn values',()=>{assert.equal(stages.length,30);for(const t of stages){const b=createBoard(t,()=>.4);assert.ok(b.every(n=>Number.isInteger(n)&&n>=t.min&&n<=t.max));assert.ok(solution(b,t.target,t.multiply?['+','×']:['+']),`stage ${t.id}`);}});
+test('save validation tolerates corrupt fields and always yields three slots',()=>{const s=normalize({version:1,slots:[{cleared:[-1,0,0,29,30,'3'],paint:900}],bests:{'score-add':-10},settings:{sound:'no'}});assert.deepEqual(s.slots[0].cleared,[0,29]);assert.equal(s.slots[0].paint,0);assert.equal(s.slots.length,3);assert.equal(s.settings.sound,true);});
