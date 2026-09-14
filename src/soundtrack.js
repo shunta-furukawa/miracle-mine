@@ -1,10 +1,18 @@
 // Sample playback only. Music and effects are licensed recordings; no synthesis.
 export const AUDIO_KEY='miracle-mine:audio:v1';
 export const MUSIC={
+ forest:{"file": "chapter-forest.mp3", "title": "Harvest3", "url": "https://peritune.com/blog/2016/06/08/harvest3/"},
+ sea:{"file": "chapter-sea.mp3", "title": "Sea_Breeze", "url": "https://peritune.com/blog/2022/06/25/sea_breeze/"},
+ cave:{"file": "chapter-cave.mp3", "title": "Ice_Cave", "url": "https://peritune.com/blog/2016/02/03/ice_cave/"},
+ volcano:{"file": "chapter-volcano.mp3", "title": "Prairie4", "url": "https://peritune.com/blog/2019/03/01/prairie4/"},
+ sky:{"file": "chapter-sky.mp3", "title": "UnknownWorld2_Harp", "url": "https://peritune.com/blog/2017/04/23/unknownworld2/"},
+ voyage:{"file": "chapter-voyage.mp3", "title": "UnknownWorld2", "url": "https://peritune.com/blog/2017/04/23/unknownworld2/"},
  title:{file:'breeze.mp3',title:'Breeze',url:'https://peritune.com/blog/2017/03/02/breeze/'},
  workshop:{file:'windmill-village.mp3',title:'Windmill_Village',url:'https://peritune.com/blog/2021/12/29/windmill_village/'},
  puzzle:{file:'wonder6.mp3',title:'Wonder6',url:'https://peritune.com/blog/2019/01/19/wonder6/'}
 };
+export const CHAPTER_MUSIC=['forest','sea','cave','volcano','sky'];
+export function gameMusicScene(mode,chapter){return mode==='sky'?'voyage':mode==='story'?(CHAPTER_MUSIC[chapter]||'puzzle'):'puzzle';}
 export const EFFECTS=['click','back','select','merge','success','clear','hint','shuffle','assemble','failure','chapter','discard','arrival','intro'];
 export function audioSettings(value,legacySound=true){
  const result={music:legacySound,sound:legacySound,musicVolume:.45,soundVolume:.6};
@@ -65,7 +73,7 @@ export class Soundtrack{
   });
  }
  setScene(scene,transition={}){this.scene=scene;this.transition=transition;this.reconcile();}
- wanted(){return this.scene==='game'?'puzzle':['slots','map','workshop'].includes(this.scene)?'workshop':'title';}
+ wanted(){return MUSIC[this.scene]?this.scene:this.scene==='game'?'puzzle':['slots','map','workshop'].includes(this.scene)?'workshop':'title';}
  ramp(param,value,seconds=.18){
   const now=this.context.currentTime;
   if(param.cancelAndHoldAtTime)param.cancelAndHoldAtTime(now);

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {Soundtrack,audioSettings,AUDIO_KEY} from '../src/soundtrack.js';
+import {Soundtrack,audioSettings,AUDIO_KEY,CHAPTER_MUSIC,gameMusicScene,MUSIC} from '../src/soundtrack.js';
 
 test('legacy mute defaults both channels off; corrupt preferences are bounded',()=>{
  assert.deepEqual(audioSettings(null,false),{music:false,sound:false,musicVolume:.45,soundVolume:.6});
@@ -37,6 +37,9 @@ test('audio races and preference storage never alter adventure data',async()=>{
   assert.equal(audio.track.gain.gain.value,1);assert.equal(audio.track.gain.gain.endTime,12.1);
   assert.equal(audio.musicBus.gain.endTime,12.1);
   audio.duck('story',true);assert.equal(audio.musicBus.gain.endTime,12.1,'dialogue opening must not shorten the music fade');
+  audio.setScene(gameMusicScene('story',0));await flush();const forest=audio.track,started=audio.context.started.length;
+  audio.setScene(gameMusicScene('story',0));await flush();assert.equal(audio.track,forest);assert.equal(audio.context.started.length,started,'next stage in same chapter must not restart music');
+  audio.setScene(gameMusicScene('story',1));await flush();assert.equal(audio.track.key,'sea');assert.equal(forest.stopping,true);
   audio.configure({music:false,musicVolume:.25,soundVolume:.35});
   assert.equal(audio.track,null);assert.equal(storage.get('miracle-mine:v1'),slots);
   assert.equal(JSON.parse(storage.get(AUDIO_KEY)).musicVolume,.25);
@@ -48,4 +51,12 @@ test('audio races and preference storage never alter adventure data',async()=>{
   globalThis.localStorage.setItem=()=>{throw new Error('quota')};
   assert.equal(audio.configure({soundVolume:.1}),false);assert.equal(storage.get('miracle-mine:v1'),slots);
  }finally{Object.assign(globalThis,original)}
+});
+
+
+test('all story chapters and the voyage have distinct music, with safe legacy fallback',()=>{
+ assert.equal(new Set([...CHAPTER_MUSIC,'voyage'].map(k=>MUSIC[k].file)).size,6);
+ for(let i=0;i<30;i++)assert.equal(gameMusicScene('story',Math.floor(i/6)),CHAPTER_MUSIC[Math.floor(i/6)]);
+ assert.equal(gameMusicScene('sky',5),'voyage');assert.equal(gameMusicScene('story',999),'puzzle');
+ assert.equal(gameMusicScene('endless',0),'puzzle');
 });

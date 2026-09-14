@@ -95,3 +95,18 @@ All four replacements use existing CC0 audio; no new music is generated.
 ## Opening transition and chapter arrival
 
 Chapter arrival/resume uses the ascending Steel 02 recording in full, converted to 128 kbps mono MP3 without changing pitch or melody. Prologue playback has no arrival cue; the first chapter introduction before any clear or failure is also silent. Later chapter introductions and resumes retain the new cue. Opening-to-dialogue music overlaps across the visual blackout and reveal, respecting music volume and mute preferences.
+
+## Chapter-specific music
+
+All six recordings below were released before March 2026 and remain CC BY 4.0 under https://peritune.com/about/ (checked 2026-09-14). Full author-provided loop OGG files are used, normalized to -20 LUFS / -2 dBTP and encoded to 96 kbps stereo MP3. Attribution is included in game settings. No pitch, tempo, melody changes or synthesis.
+
+| Chapter | Recording | Direction | Source |
+| --- | --- | --- | --- |
+| Forest | `Harvest3` | Light pastoral Celtic rhythm | https://peritune.com/blog/2016/06/08/harvest3/ |
+| Sea | `Sea_Breeze` | Fresh tropical flute and guitar | https://peritune.com/blog/2022/06/25/sea_breeze/ |
+| Crystal cave | `Ice_Cave` | Mysterious bells and marimba | https://peritune.com/blog/2016/02/03/ice_cave/ |
+| Volcano | `Prairie4` | Driving Celtic folk rhythm, emphasizing energy over menace | https://peritune.com/blog/2019/03/01/prairie4/ |
+| Sky | `UnknownWorld2_Harp` | Airy harp arrangement | https://peritune.com/blog/2017/04/23/unknownworld2/ |
+| Post-ending voyage | `UnknownWorld2` | Expanded orchestral version of the sky theme | https://peritune.com/blog/2017/04/23/unknownworld2/ |
+
+Playback selects chapter music before the chapter introduction. Consecutive stages within a chapter keep the same source playing. Changing chapters crossfades; returning from the map resumes the track’s saved playback position. The opening keeps its existing music and synchronized blackout transition. Only two decoded music buffers are retained. All recordings remain in the offline asset cache.
