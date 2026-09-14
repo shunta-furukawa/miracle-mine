@@ -211,3 +211,8 @@ body[data-screen=game]{background:#173a3d}.game-screen{isolation:isolate}.game-s
 @media(max-width:700px) and (orientation:portrait){.guardian-card,.luka-portrait{display:none}}
 /* Both sides look inward toward the puzzle and one another. */
 .guardian .hud-art,.luka-portrait .hud-art{transform:scaleX(-1)}
+
+/* Resolution runs in board coordinates; numbers can float above the endpoint. */
+.mine-motion{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:visible}.gather-stone,.gather-shard{position:absolute;background-image:url('./assets/game-stones.webp');background-repeat:no-repeat;pointer-events:none}.gather-charged{filter:drop-shadow(0 0 6px #ffe19a)}.gather-number{position:absolute;color:#fff8dd;font-size:clamp(36px,6vw,72px);font-weight:900;line-height:1;text-shadow:0 3px 0 #614423,0 0 15px #ffcc58;white-space:nowrap;z-index:2}.gather-number.success{color:#fff4a6}.gather-number.clear{color:#e2f8ff;text-shadow:0 3px 0 #214957,0 0 12px #77dfff}.gather-spark{position:absolute;color:#ffeb9c;font-size:22px;text-shadow:0 0 8px #ffb835}.board.resolving .stone{transition:none;pointer-events:none}.board.resolving .stone.selected{filter:none;transform:none;outline:none;box-shadow:none}
+
+.board.refilling{overflow:hidden}

@@ -112,12 +112,13 @@ export class Soundtrack{
   }catch{this.onChange();}finally{if(request===this.musicRequest)this.loadingTrack=null;}
  }
  async play(name){
-  if(!EFFECTS.includes(name)||!this.unlocked||this.hidden||!this.settings.sound||!this.settings.soundVolume)return;
-  const now=performance.now(),cooldown=name==='select'?65:100;
+  const file=name==='collect'?'click':name;
+  if(!EFFECTS.includes(file)||!this.unlocked||this.hidden||!this.settings.sound||!this.settings.soundVolume)return;
+  const now=performance.now(),cooldown=name==='collect'?35:name==='select'?65:100;
   if(now-(this.lastEffect.get(name)??-Infinity)<cooldown)return;
   this.lastEffect.set(name,now);const epoch=this.effectEpoch;
   try{
-   const buffer=await this.buffer(name+'.mp3');
+   const buffer=await this.buffer(file+'.mp3');
    // Never replay old input after a slow load, mute or a background transition.
    if(this.hidden||!this.settings.sound||epoch!==this.effectEpoch||performance.now()-now>350||this.context.state!=='running')return;
    const limit=name==='select'?2:8;
