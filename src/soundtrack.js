@@ -5,7 +5,7 @@ export const MUSIC={
  workshop:{file:'windmill-village.mp3',title:'Windmill_Village',url:'https://peritune.com/blog/2021/12/29/windmill_village/'},
  puzzle:{file:'wonder6.mp3',title:'Wonder6',url:'https://peritune.com/blog/2019/01/19/wonder6/'}
 };
-export const EFFECTS=['click','back','select','merge','success','clear','hint','shuffle','assemble','failure','chapter'];
+export const EFFECTS=['click','back','select','merge','success','clear','hint','shuffle','assemble','failure','chapter','discard','arrival','intro'];
 export function audioSettings(value,legacySound=true){
  const result={music:legacySound,sound:legacySound,musicVolume:.45,soundVolume:.6};
  if(value?.version!==1)return result;
@@ -124,7 +124,7 @@ export class Soundtrack{
    if([...this.voices].filter(v=>name!=='select'||v.name==='select').length>=limit)return;
    const source=this.context.createBufferSource();source.buffer=buffer;source.connect(this.soundBus);
    const voice={source,name};this.voices.add(voice);
-   const jingle=name==='chapter';if(jingle)this.duck(voice,true);
+   const jingle=['chapter','clear','arrival','intro'].includes(name);if(jingle)this.duck(voice,true);
    source.onended=()=>{source.disconnect();this.voices.delete(voice);if(jingle)this.duck(voice,false);};
    source.start();
   }catch{}

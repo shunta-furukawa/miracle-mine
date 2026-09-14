@@ -109,19 +109,6 @@
       "changes": "Converted OGG to MP3 96 kbps mono; no melody or pitch changes."
     },
     {
-      "title": "confirmation_004",
-      "file": "clear.mp3",
-      "page": "https://kenney.nl/assets/interface-sounds",
-      "creator": "Kenney",
-      "license": "CC0-1.0",
-      "originalFile": "confirmation_004.ogg",
-      "originalSHA256": "568967a3d9f8a8f6af54ea01729c4882284308f2a27d78c07ffd7ee0d6951661",
-      "sha256": "cd1de551866ed392cb7de51458e85ef9eb4db4db1fe9af6eb706e13ea4f65aec",
-      "bytes": 6627,
-      "duration": 0.522449,
-      "changes": "Converted OGG to MP3 96 kbps mono; no melody or pitch changes."
-    },
-    {
       "title": "question_001",
       "file": "hint.mp3",
       "page": "https://kenney.nl/assets/interface-sounds",
@@ -174,17 +161,69 @@
       "changes": "Converted OGG to MP3 96 kbps mono; no melody or pitch changes."
     },
     {
-      "title": "jingles_PIZZI07",
+      "title": "jingles_SAX07",
+      "file": "clear.mp3",
+      "page": "https://kenney.nl/assets/music-jingles",
+      "creator": "Kenney",
+      "license": "CC0-1.0",
+      "originalFile": "jingles_SAX07.ogg",
+      "originalSHA256": "241c8570fbded819ee0205e4be3efa80aeb834a70df89318da88f9e219798b11",
+      "sha256": "3254a8f10ffeb9bb21d9c4d911678ab2ba89630e572281d6f1054fb6bfd2f29a",
+      "bytes": 28883,
+      "duration": 1.776327,
+      "changes": "Converted original OGG recording to 128 kbps mono MP3. No melody or pitch changes."
+    },
+    {
+      "title": "jingles_SAX07",
       "file": "chapter.mp3",
       "page": "https://kenney.nl/assets/music-jingles",
       "creator": "Kenney",
       "license": "CC0-1.0",
-      "originalFile": "jingles_PIZZI07.ogg",
-      "originalSHA256": "91870588924e0e498c6eb8d4f4ccf8595c9e7dc51fb553797b551062e642ce7c",
-      "sha256": "e11bccf19858621b6e70c1dacea6f50a1d5e88475bd220e5c42b5d8bc0eb1ff6",
-      "bytes": 16658,
-      "duration": 1.358367,
-      "changes": "Converted OGG to MP3 96 kbps mono; no melody or pitch changes."
+      "originalFile": "jingles_SAX07.ogg",
+      "originalSHA256": "241c8570fbded819ee0205e4be3efa80aeb834a70df89318da88f9e219798b11",
+      "sha256": "3254a8f10ffeb9bb21d9c4d911678ab2ba89630e572281d6f1054fb6bfd2f29a",
+      "bytes": 28883,
+      "duration": 1.776327,
+      "changes": "Converted original OGG recording to 128 kbps mono MP3. No melody or pitch changes."
+    },
+    {
+      "title": "jingles_STEEL07",
+      "file": "arrival.mp3",
+      "page": "https://kenney.nl/assets/music-jingles",
+      "creator": "Kenney",
+      "license": "CC0-1.0",
+      "originalFile": "jingles_STEEL07.ogg",
+      "originalSHA256": "206b5cb18870c1faa393047cb857eda28441b9682380c9eb5910119ea04c2ece",
+      "sha256": "d76b35eab11c257622bacfdc7bab33093bd2001117da430f7828cfec91819b3a",
+      "bytes": 25957,
+      "duration": 1.593469,
+      "changes": "Converted original OGG recording to 128 kbps mono MP3. No melody or pitch changes."
+    },
+    {
+      "title": "jingles_PIZZI02",
+      "file": "intro.mp3",
+      "page": "https://kenney.nl/assets/music-jingles",
+      "creator": "Kenney",
+      "license": "CC0-1.0",
+      "originalFile": "jingles_PIZZI02.ogg",
+      "originalSHA256": "4967dc3cd31257716f455ef50f8980378726ce086954c7a5563c0c57ee129e3e",
+      "sha256": "2e536855d245685e622bc631bcb35d64f3298fd4303e1067b1e441dfa9d6ebc5",
+      "bytes": 16344,
+      "duration": 0.992653,
+      "changes": "Converted original OGG recording to 128 kbps mono MP3. No melody or pitch changes."
+    },
+    {
+      "title": "drop_004",
+      "file": "discard.mp3",
+      "page": "https://kenney.nl/assets/interface-sounds",
+      "creator": "Kenney",
+      "license": "CC0-1.0",
+      "originalFile": "drop_004.ogg",
+      "originalSHA256": "10738707f9300f9b963ceba46d5da2ed4a221faf7d39484a643c2d3bc151c5f2",
+      "sha256": "7df9da0015c16a82c7f9a8c5a925fd022f96cbc5587d4bb9de3f1fc0d333076b",
+      "bytes": 5477,
+      "duration": 0.313469,
+      "changes": "Converted original OGG recording to 128 kbps mono MP3. No melody or pitch changes."
     }
   ]
 }

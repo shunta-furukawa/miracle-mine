@@ -42,12 +42,15 @@ https://creativecommons.org/publicdomain/zero/1.0/
 | select stone | Interface Sounds | glass_001.ogg |
 | merge stones | Interface Sounds | drop_002.ogg |
 | correct answer | Interface Sounds | confirmation_002.ogg |
-| stage clear | Interface Sounds | confirmation_004.ogg |
+| stage clear | Music Jingles | Sax jingles/jingles_SAX07.ogg |
 | hint | Interface Sounds | question_001.ogg |
-| shuffle / discard | Interface Sounds | scroll_001.ogg |
+| manual shuffle | Interface Sounds | scroll_001.ogg |
 | assembly / customization | Interface Sounds | switch_003.ogg |
 | retry / time up | Interface Sounds | error_003.ogg |
-| chapter clear | Music Jingles | Pizzicato jingles/jingles_PIZZI07.ogg |
+| chapter clear | Music Jingles | Sax jingles/jingles_SAX07.ogg |
+| chapter arrival / resume | Music Jingles | Steel jingles/jingles_STEEL07.ogg |
+| stage goal announcement | Music Jingles | Pizzicato jingles/jingles_PIZZI02.ogg |
+| discard stones | Interface Sounds | drop_004.ogg |
 
 Sources: https://kenney.nl/assets/interface-sounds and
 https://kenney.nl/assets/music-jingles . Both pack pages explicitly state CC0.
@@ -72,3 +75,5 @@ Settings. Copyright and license notices must remain with the recordings.
 - Dialogues, pause/results and the chapter jingle lower BGM volume.
 - All audio assets ship in the build and are included in the offline cache.
 
+
+Version 0.9 updates clear/chapter to a longer sax jingle and adds chapter arrival, stage announcement and a single-hit discard sound. These five files use 128 kbps mono MP3. All remain CC0 recordings.
