@@ -24,7 +24,9 @@ export function service(query){
    // Unique credential makes retries reuse the same server-issued UID.
    const rows=await query('INSERT INTO mm_pilots(uid,secret_hash) VALUES($1,$2) ON CONFLICT(secret_hash) DO UPDATE SET secret_hash=EXCLUDED.secret_hash RETURNING uid',[randomUUID(),hash(key)]);return {uid:rows[0].uid};
   }
-  const uid=await pilot(key);if(!uuid(b.runId))fail('INPUT',400);
+  const uid=await pilot(key);
+  if(action==='standing'){const rows=await query(`SELECT b.distance,1+(SELECT count(*) FROM mm_bests x WHERE x.distance>b.distance OR (x.distance=b.distance AND (x.achieved_at<b.achieved_at OR (x.achieved_at=b.achieved_at AND x.uid<b.uid)))) AS rank FROM mm_bests b WHERE b.uid=$1`,[uid]);return rows.length?{rank:Number(rows[0].rank),distance:Number(rows[0].distance)}:{rank:null,distance:0};}
+  if(!uuid(b.runId))fail('INPUT',400);
   if(action==='start'){
    if(!flightName(b.name))fail('NAME',400);if(b.protocol!==1)fail('VERSION',409);
    await query("DELETE FROM mm_voyages WHERE uid=$1 AND created_at<now()-interval '48 hours'",[uid]);

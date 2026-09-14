@@ -1,7 +1,7 @@
 import {skyChapter} from './sky-voyage.js';
 import {chapters} from './data.js';
 export function stageBrief(stage,{mode='story',resume=false,remaining=stage.count}={}){
- if(mode==='sky')return {chapter:skyChapter,label:'SECRET CHAPTER 06',name:skyChapter.name,target:stage.target,goal:'完成した数字の分だけ、空を進もう',hint:'×で3枚以上つなごう · ＋で一桁の石を準備できるよ'};
+ if(mode==='sky')return {chapter:skyChapter,label:'SECRET CHAPTER 06',name:skyChapter.name,target:stage.target,goal:'完成した数字の分だけ、空を進もう',hint:'＋と×で、お題の数字をつくろう'};
  const story=mode==='story';
  return {chapter:chapters[stage.chapter],label:story?`STAGE ${stage.chapter+1}-${stage.step+1}`:mode==='score'?'SCORE ATTACK':'ENDLESS',
   name:story?stage.name:mode==='score'?'3分間のチャレンジ':'終わらない冒険',target:stage.target,

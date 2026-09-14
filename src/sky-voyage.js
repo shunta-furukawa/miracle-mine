@@ -10,10 +10,10 @@ export const treasures=[
  {name:'天空の真珠',at:150000,text:'ふたりでたどり着いた、はるかな空の宝。'}
 ];
 export const voyageUnlocked=s=>!!s&&Array.from({length:30},(_,i)=>i).every(i=>s.cleared.includes(i));
-export function voyageStage(done=0){const n=done<routes.length?done:7+(done-7)%5,factors=routes[n];return {chapter:4,step:0,id:30,name:skyChapter.name,target:factors.reduce((a,b)=>a*b,1),factors,min:2,max:9,multiply:true,count:Infinity,life:80,recover:18,minMatch:3};}
-export function voyageEvaluate(board,path,op,target){const r=evaluate(board,path,op,target);return r.kind==='success'&&(op!=='×'||path.length<3)?{...r,kind:'cancel',message:'×で3枚以上つないで、空へ進もう'}:r;}
+export function voyageStage(done=0){const n=done<routes.length?done:7+(done-7)%5,factors=routes[n];return {chapter:4,step:0,id:30,name:skyChapter.name,target:factors.reduce((a,b)=>a*b,1),factors,min:2,max:9,multiply:true,count:Infinity,life:80,recover:18};}
+export const voyageEvaluate=evaluate;
 export function voyageSolution(board,target){
- function visit(path,value){if(value===target&&path.length>=3)return {path,op:'×'};if(path.length>=4||value>=target||target%value)return null;for(let i=0;i<25;i++)if(!path.includes(i)&&adjacent(path.at(-1),i)){const found=visit([...path,i],value*board[i]);if(found)return found}return null}
+ function visit(path,value){if(value===target&&path.length>=2)return {path,op:'×'};if(path.length>=4||value>=target||target%value)return null;for(let i=0;i<25;i++)if(!path.includes(i)&&adjacent(path.at(-1),i)){const found=visit([...path,i],value*board[i]);if(found)return found}return null}
  for(let i=0;i<25;i++){const found=visit([i],board[i]);if(found)return found}return null;
 }
 export function prepareVoyageBoard(board,stage){if(voyageSolution(board,stage.target))return board;const next=[...board];stage.factors.forEach((n,i)=>next[10+i]=n);return next;}

@@ -6,11 +6,13 @@ test('real SQL: goal order, duplicates, concurrent targets, finalization and sna
  const db=new PGlite();try{for(const sql of schema)await db.exec(sql);const query=async(s,p)=>(await db.query(s,p)).rows,api=service(query),key='a'.repeat(64);
  const uid=(await api('register',{completed:true},key)).uid;assert.equal((await api('register',{completed:true},key)).uid,uid);await assert.rejects(api('register',{completed:false},'b'.repeat(64)),/LOCKED/);
  const runId=randomUUID(),design={paint:2,wing:1,propeller:2,decoration:1};await api('start',{runId,name:'そらいろ号',design,protocol:1},key);
+ assert.deepEqual(await api('standing',{},key),{rank:null,distance:0});await assert.rejects(api('standing',{},'f'.repeat(64)),/AUTH/);
  await assert.rejects(api('goal',{runId,seq:1,level:0,target:81},'f'.repeat(64)),/AUTH/);
  for(const e of [{seq:1,level:0,target:81},{seq:1,level:0,target:81},{seq:2,level:0,target:81},{seq:3,level:2,target:144}])await api('goal',{runId,...e},key);
  assert.equal((await api('board')).entries.length,0);
  await api('finish',{runId,count:3,distance:306,reason:'return'},key);await api('finish',{runId,count:3,distance:306,reason:'return'},key);
- let row=(await api('board')).entries[0];assert.equal(row.distance,306);assert.equal(row.name,'そらいろ号');assert.deepEqual(row.design,design);assert(!('key'in row));assert(!('secret_hash'in row));
+ let row=(await api('board')).entries[0];assert.deepEqual(await api('standing',{},key),{rank:1,distance:306});assert.equal(row.distance,306);assert.equal(row.name,'そらいろ号');assert.deepEqual(row.design,design);assert(!('key'in row));assert(!('secret_hash'in row));
+ const other=(await api('register',{completed:true},'b'.repeat(64))).uid;await query('INSERT INTO mm_bests(uid,distance,snapshot) VALUES($1,999,$2::jsonb)',[other,JSON.stringify({name:'上位の機体',design:{}})]);assert.deepEqual(await api('standing',{},key),{rank:2,distance:306});await query('DELETE FROM mm_bests WHERE uid=$1',[other]);
  const shorter=randomUUID();await api('start',{runId:shorter,name:'別の名前',design:{},protocol:1},key);await api('goal',{runId:shorter,seq:1,level:0,target:81},key);await api('finish',{runId:shorter,count:1,distance:81,reason:'steam'},key);assert.equal((await api('board')).entries[0].name,'そらいろ号');
  const bad=randomUUID();await api('start',{runId:bad,name:'不正',protocol:1},key);await assert.rejects(api('goal',{runId:bad,seq:1,level:0,target:9999},key),/INVALID/);await assert.rejects(api('finish',{runId:bad,count:0,distance:0,reason:'return'},key),/INVALID/);assert.equal((await api('board')).entries[0].distance,306);
  const missed=randomUUID();await api('start',{runId:missed,name:'未完了',protocol:1},key);await assert.rejects(api('goal',{runId:missed,seq:2,level:1,target:108},key),/INVALID/);
