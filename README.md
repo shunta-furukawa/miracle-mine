@@ -105,3 +105,7 @@ under dialogue/results, and suspends when hidden. Pending requests cannot
 restart a stale scene or muted effect. Audio settings are stored separately
 from the three adventure slots and inherit the existing mute preference.
 All recordings are bundled and available offline after the app cache is ready.
+
+## 空の旅ランキング
+
+v0.16から、完成した飛行機に名前を付けて、機体デザイン付きの任意参加ランキングに挑戦できます。VercelへNeon Freeを接続する手順は [ランキング設定](docs/RANKING-SETUP.md) を参照してください。未接続でも通常のゲームは遊べます。
