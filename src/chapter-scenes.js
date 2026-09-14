@@ -37,11 +37,11 @@ export function showChapterScene(index,{clear=false,completed=[],previous=comple
  </section>`;
  root.querySelector('.chapter-landscape').style.backgroundPosition=`${scene%3*50}% ${Math.floor(scene/3)*100}%`;
  let closed=false;const stage=root.querySelector('.assembly-showcase');
- const finishAssembly=()=>{if(!stage)return;stage.classList.remove('is-assembling');stage.classList.add('assembly-ready');stage.querySelector('.assembly-caption').textContent=assemblyNames[Number(stage.dataset.after)];};
+ const finishAssembly=()=>{if(!stage||!stage.classList.contains('is-assembling'))return;document.dispatchEvent(new Event('miracle:assembly'));stage.classList.remove('is-assembling');stage.classList.add('assembly-ready');stage.querySelector('.assembly-caption').textContent=assemblyNames[Number(stage.dataset.after)];};
  stage?.addEventListener('animationend',event=>{if(event.animationName==='part-dock')finishAssembly();});
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)finishAssembly();
- function close(){if(closed)return;closed=true;root.close();root.remove();active=null;if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});}
+ function close(){if(closed)return;closed=true;document.dispatchEvent(new CustomEvent('miracle:chapter',{detail:{open:false}}));root.close();root.remove();active=null;if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});}
  root.addEventListener('click',event=>{const next=event.target.closest('.chapter-continue'),map=event.target.closest('.chapter-map');if(!next&&!map)return;close();(next?onNext:onMap)?.();});
  root.addEventListener('cancel',event=>{event.preventDefault();root.querySelector('.chapter-continue').focus();});
- document.body.append(root);root.showModal();active=close;root.querySelector('.chapter-continue').focus();
+ document.body.append(root);root.showModal();document.dispatchEvent(new CustomEvent('miracle:chapter',{detail:{open:true}}));active=close;root.querySelector('.chapter-continue').focus();
 }

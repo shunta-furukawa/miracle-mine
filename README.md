@@ -90,3 +90,18 @@ Wings unlock with the forest component; paint and emblems with the ocean hull; p
 The title uses alpha-preserving generated WebP assets: `src/assets/title-logo.webp` and `src/assets/menu-icons.webp`. The portrait layout presents the existing workshop illustration in its own wide scene beneath the logo, preserving character visibility. Landscape keeps the full-screen artwork. Main menu labels explicitly use dark brown, including WebKit text fill; storybook headings prefer the system Japanese Mincho font with readable fallbacks. Dialogue and puzzle typography are unchanged. Safe-area spacing remains applied.
 
 Built-in image generation prompts: (1) “Miracle Mine” on two compact lines, custom ivory/gold storybook serif lettering, dark teal outline, brass gears, cyan crystal and steam-airplane wings; isolated transparent logo, no extra text. (2) A 3×2 atlas of matching brass/teal medallions: map/compass, stopwatch/trophy, infinity/crystals, instruction book, gear/wrench, airplane/hangar; bold readable silhouettes, no captions. The generated alpha channels are preserved during WebP encoding. Original workshop art is reused without stretching or editing.
+
+## Licensed soundtrack (0.8)
+
+Breeze (title/flight), Windmill_Village (map/workshop), and Wonder6 (puzzles)
+by PeriTune use the author's CC BY 4.0 loop recordings. Ten sound effects and
+a chapter jingle use Kenney CC0 recordings. Settings include independent BGM
+and SE switches/volumes and visible attribution. The title has a music button.
+No music or sound-effect synthesis is used. See [audio licenses](docs/AUDIO-LICENSES.md)
+and [asset provenance](docs/audio-sources.json).
+
+The single Web Audio context unlocks on a gesture, fades between scenes, ducks
+under dialogue/results, and suspends when hidden. Pending requests cannot
+restart a stale scene or muted effect. Audio settings are stored separately
+from the three adventure slots and inherit the existing mute preference.
+All recordings are bundled and available offline after the app cache is ready.

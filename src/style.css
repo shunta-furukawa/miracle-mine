@@ -165,5 +165,18 @@ header .subtle{display:inline-flex;align-items:center;gap:7px}header .menu-art{w
  .illustrated-title h1.title-logo{width:min(300px,50vh)}
  .illustrated-title{padding-bottom:calc(50px + var(--safe-bottom))}
  .illustrated-title .title-bottom .title-tag{flex-basis:auto;order:1;margin-left:8px;font-size:10px}
- .illustrated-title .title-bottom>span{order:2}
+.illustrated-title .title-bottom>span{order:2}
 }
+/* Audio controls keep the adventure and save slots separate. */
+.illustrated-title .title-audio{position:absolute;right:calc(16px + var(--safe-right,0px));top:calc(12px + var(--safe-top));z-index:3;min-height:36px;padding:6px 12px;font-size:12px;color:#fff0ce;-webkit-text-fill-color:#fff0ce}
+.audio-settings{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:12px 0}
+.audio-setting{padding:12px 14px;background:#e5d5b344;border:1px solid #a5793955;border-radius:10px}
+.audio-setting .setting{margin:0 0 12px;padding:0;gap:12px}
+.volume-setting{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:13px;align-items:center}
+.volume-setting input{grid-column:1/-1;width:100%;min-height:32px;margin:0;accent-color:#17525a;cursor:pointer}
+.volume-setting output{font-variant-numeric:tabular-nums;font-weight:700}
+.audio-credits{font-size:12px;line-height:1.7;margin:16px 0;border-top:1px solid #a5793955;padding-top:12px}
+.audio-credits summary{cursor:pointer;font-weight:700;min-height:32px}.audio-credits a{color:#145059;text-decoration:underline;text-underline-offset:3px}.audio-credits p{margin:8px 0}.audio-credits ul{padding-left:20px}
+.audio-save-status{font-size:12px}
+@media(max-width:500px){.audio-settings{grid-template-columns:1fr;gap:10px}.audio-setting{padding:10px 12px}.illustrated-title .title-audio{top:calc(8px + var(--safe-top));right:10px;font-size:10px;padding:5px 9px;min-height:30px}}
+@media(max-height:500px) and (orientation:landscape){.audio-settings{gap:12px}.audio-setting{padding:8px 10px}.audio-credits{margin:10px 0}.illustrated-title .title-audio{top:8px}}
