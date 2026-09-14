@@ -11,7 +11,7 @@ const subtitles=[
 let active=null;
 
 /** A chapter boundary owns focus until an explicit action, never a timer. */
-export function showChapterScene(index,{clear=false,completed=[],previous=completed,paint=0,onNext,onMap}={}){
+export function showChapterScene(index,{clear=false,completed=[],previous=completed,paint=0,design={paint},onNext,onMap}={}){
  active?.();
  const chapter=chapters[index],scene=index+1;
  const previousFocus=document.activeElement;
@@ -29,7 +29,7 @@ export function showChapterScene(index,{clear=false,completed=[],previous=comple
    <h1>${chapter.name}</h1>
    <div class="chapter-rule" aria-hidden="true">✦</div>
    ${clear?`<p class="chapter-complete">第${index+1}章 · 全6ステージ クリア！</p>
-   ${assemblyShowcase({completed,previous,paint,index,animate:previous.length<completed.length})}<div class="chapter-reward">${partArt(index)}<div><small>飛行機の部品を手に入れた！</small><strong>${chapter.part}</strong><span>${chapter.material}</span></div></div>
+   ${assemblyShowcase({completed,previous,paint,design,index,animate:previous.length<completed.length})}<div class="chapter-reward">${partArt(index)}<div><small>飛行機の部品を手に入れた！</small><strong>${chapter.part}</strong><span>${chapter.material}</span></div></div>
    <p class="chapter-thanks">${chapter.guardian}「${chapter.end}」</p>
    <div class="chapter-parts">${collectionStrip(completed)}<small>${completed.length} / 5 部品</small></div>`:`<p class="chapter-subtitle">${subtitles[index]}</p><p class="chapter-destination">出会う守り手 · ${chapter.guardian}</p>`}
    <div class="chapter-controls"><button class="chapter-continue">${clear?(index===4?'おじいちゃんと初飛行へ ▸':`第${index+2}章へ ▸`):'物語をはじめる ▸'}</button>${clear?'<button class="chapter-map">冒険の地図へ</button>':''}</div>
