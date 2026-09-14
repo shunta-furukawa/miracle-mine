@@ -85,3 +85,53 @@ dialog.chapter-dialog{width:100vw;max-width:none;height:100dvh;max-height:none;m
  .game-screen{padding-top:calc(12px + var(--safe-top));padding-bottom:calc(12px + var(--safe-bottom))}
  .title-screen{padding-top:calc(12svh + var(--safe-top));padding-bottom:calc(90px + var(--safe-bottom))}
 }
+/* Illustrated title: explicit contrast and a portrait composition for the cast. */
+:root{--storybook-font:'Hiragino Mincho ProN','Yu Mincho','YuMincho','Noto Serif JP','Noto Sans JP',serif}
+header h2,.hangar-heading h2,.hangar-custom h3,.chapter-info h3{font-family:var(--storybook-font)}
+.illustrated-title{padding:calc(24px + var(--safe-top)) 6vw calc(84px + var(--safe-bottom));background:linear-gradient(90deg,#07252dde, #123d4670 42%,transparent 72%)}
+.illustrated-title .title-copy{width:min(510px,44vw)}
+.title-masthead{text-align:center}.title-masthead>.eyebrow{font-size:12px;margin:0 0 4px;letter-spacing:.08em;color:#ffe3a1;text-shadow:0 2px 5px #082629}
+.illustrated-title h1.title-logo{margin:0 auto;width:min(100%,390px);font-size:0;line-height:0;text-shadow:none}
+.title-logo img{display:block;width:100%;height:auto}
+.illustrated-title .kana{font-family:var(--storybook-font);font-size:14px;letter-spacing:.26em;margin:0 0 22px;text-shadow:0 2px 5px #082629}
+.title-portrait-scene{display:none}
+.illustrated-title .main-menu{max-width:none;gap:12px}
+.illustrated-title .main-menu button{color:#392918;-webkit-text-fill-color:#392918;font-family:var(--storybook-font);font-weight:800;font-size:clamp(17px,1.8vw,23px);padding:10px 18px;gap:16px;min-height:66px;text-shadow:none}
+.menu-art{display:inline-block;flex:none;width:46px;height:46px;background:url('./assets/menu-icons.webp') var(--icon-x) var(--icon-y)/300% 200% no-repeat;vertical-align:middle}
+.illustrated-title .title-tag{font-family:var(--storybook-font);font-size:14px;margin:18px 0 0;max-width:none;text-align:center}
+.illustrated-title .title-bottom{align-items:center;gap:12px}
+.illustrated-title .title-bottom button{display:flex;align-items:center;gap:8px;padding:7px 12px;color:#fff2d0;-webkit-text-fill-color:#fff2d0;font-size:13px}
+.illustrated-title .title-bottom .menu-art{width:28px;height:28px}
+.installed .illustrated-title .install-button{display:none}
+@media(max-height:600px) and (orientation:landscape){
+ .illustrated-title{padding-top:calc(10px + var(--safe-top));padding-bottom:calc(58px + var(--safe-bottom))}
+ .illustrated-title .title-copy{width:44vw;max-width:500px}
+ .illustrated-title h1.title-logo{width:min(245px,36vh)}
+ .title-masthead>.eyebrow{font-size:9px;margin:0}
+ .illustrated-title .kana{font-size:10px;margin:0 0 8px}
+ .illustrated-title .main-menu{gap:7px}
+ .illustrated-title .main-menu button{min-height:42px;padding:4px 12px;font-size:16px;gap:12px}
+ .illustrated-title .main-menu .menu-art{width:32px;height:32px}
+ .illustrated-title .title-tag{font-size:10px;margin:10px 0 0}
+ .illustrated-title .title-bottom{bottom:calc(10px + var(--safe-bottom))}
+ .illustrated-title .title-bottom button{font-size:11px;padding:4px 9px}
+ .illustrated-title .title-bottom .menu-art{width:22px;height:22px}
+}
+@media(orientation:portrait){
+ body[data-screen="title"]{background:#123b40}
+ .illustrated-title{display:flex;flex-direction:column;align-items:stretch;min-height:100svh;padding:calc(12px + var(--safe-top)) 0 calc(14px + var(--safe-bottom));background:radial-gradient(ellipse at 50% 15%,#28585b,#102f36 75%)}
+ .illustrated-title .title-copy{width:100%;display:flex;flex-direction:column}
+ .title-masthead{padding:0 20px;position:relative;z-index:1}
+ .title-masthead>.eyebrow{font-size:10px;letter-spacing:.04em}
+ .illustrated-title h1.title-logo{width:min(65vw,260px)}
+ .illustrated-title .kana{font-size:11px;margin:0 0 2px}
+ .title-portrait-scene{display:block;width:100%;height:clamp(180px,28svh,310px);background:url('./assets/workshop.webp') right center/cover no-repeat;mask-image:linear-gradient(transparent,#000 12%,#000 85%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 12%,#000 85%,transparent);margin:0 0 -5px}
+ .illustrated-title .main-menu{margin:0 6vw;gap:10px}
+ .illustrated-title .main-menu button{min-height:54px;padding:6px 16px;font-size:18px;gap:16px}
+ .illustrated-title .main-menu .menu-art{width:40px;height:40px}
+ .illustrated-title .title-tag{font-size:12px;margin:14px 12px}
+ .illustrated-title .title-bottom{position:static;display:flex;flex-wrap:wrap;justify-content:center;margin:0 5vw;gap:8px}
+ .illustrated-title .title-bottom button{font-size:11px;padding:5px 9px}
+ .illustrated-title .title-bottom .menu-art{width:24px;height:24px}
+ .illustrated-title .title-bottom>span{width:100%;margin:6px 0 0;text-align:center;font-size:9px}
+}
