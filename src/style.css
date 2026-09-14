@@ -62,3 +62,26 @@ dialog.chapter-dialog{width:100vw;max-width:none;height:100dvh;max-height:none;m
 @media(orientation:portrait){.hangar-main .hangar-display{padding:6px 4px 27px;margin-top:14px}.hangar-main .choices button{font-size:12px}.hangar-main .hangar-heading h2{font-size:19px}}
 @media(max-height:500px) and (orientation:landscape){.hangar-main .hangar-display{padding:3px 3px 22px}.hangar-main .hangar-display .airplane-render{max-width:280px;margin:auto}.hangar-main .custom-grid{gap:12px}.hangar-main .choices button{font-size:11px;padding:7px 3px}.hangar-inventory{align-self:start}}
 @media(prefers-reduced-motion:reduce){.hangar-main .airplane-render{animation:none}}
+/* Keep responsive overrides inside the device safe area, including iOS standalone. */
+:root{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+.page{padding-top:calc(24px + var(--safe-top));padding-bottom:calc(24px + var(--safe-bottom))}
+.game-screen{padding-top:calc(16px + var(--safe-top));padding-bottom:calc(12px + var(--safe-bottom))}
+.title-screen{padding-top:calc(40px + var(--safe-top));padding-bottom:calc(80px + var(--safe-bottom))}
+.title-bottom{bottom:calc(20px + var(--safe-bottom))}
+.story-header{top:calc(12px + var(--safe-top))}
+.chapter-location{top:calc(26px + var(--safe-top))}
+.chapter-presentation,.chapter-victory .chapter-presentation{padding-top:calc(90px + var(--safe-top))}
+.hangar-main .hangar-display{top:calc(8px + var(--safe-top))}
+#app-update{top:calc(16px + var(--safe-top))}
+@media(max-height:500px) and (orientation:landscape){
+ .page,body[data-screen="slots"] .page{padding-top:calc(12px + var(--safe-top));padding-bottom:calc(12px + var(--safe-bottom))}
+ .game-screen{padding-top:calc(8px + var(--safe-top));padding-bottom:calc(8px + var(--safe-bottom))}
+ .title-screen{padding-top:calc(22px + var(--safe-top));padding-bottom:calc(50px + var(--safe-bottom))}
+ .story-header{top:calc(8px + var(--safe-top))}
+ .chapter-victory .chapter-presentation{padding-top:calc(24px + var(--safe-top))}
+}
+@media(orientation:portrait){
+ .page{padding-top:calc(20px + var(--safe-top));padding-bottom:calc(20px + var(--safe-bottom))}
+ .game-screen{padding-top:calc(12px + var(--safe-top));padding-bottom:calc(12px + var(--safe-bottom))}
+ .title-screen{padding-top:calc(12svh + var(--safe-top));padding-bottom:calc(90px + var(--safe-bottom))}
+}
