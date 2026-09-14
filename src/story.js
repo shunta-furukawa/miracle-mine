@@ -1,10 +1,10 @@
 import {chapters} from './data.js';
-const line=(who,text)=>({who,text});
+const line=(who,text,expression='talk')=>({who,text,expression});
 const L=text=>line('ルカ',text);
 const G=(chapter,text)=>line(chapters[chapter].guardian,text);
 export const prologue={title:'はじまりの物語 · 雲の向こうへ',scene:0,partner:'トトじい',lines:[
  L('おじいちゃん、この飛行機、どうして翼がないの？'),
- line('トトじい','まだ作りかけなんじゃ。雲の向こうを見たくてな。'),
+ line('トトじい','まだ作りかけなんじゃ。雲の向こうを見たくてな。','emotion'),
  L('ぼくが完成させる！ それで、おじいちゃんを乗せて飛ぶんだ。'),
  line('トトじい','なら、このマイン集め機を持っておいき。石の数字は、中にある力の大きさじゃ。'),
  L('数字をつなぐと、機械を動かす力になるんだね！'),
@@ -27,7 +27,7 @@ const middles=[
  [[],['火がついたぞ！ 次は炉の温度を安定させるんだ。','掛け算で0をつなぐと0になっちゃうね。通る道も大事だ！'],['今度は、金属をやわらかくするぞ！','3と6なら18。必要なら足し算で6を準備しよう。'],['ボイラーの形を作るぞ。力を合わせてくれ！','4と6で24だね。「＋」から「×」への切り替えも忘れずに！'],['プロペラの材料を鍛えるぞ。大きな力がいるんだ。','6と6を隣に用意して、掛け算で36にしよう！'],['仕上げだ！ 強ければいいってものじゃない。ぴったりの力が大事だぞ。','わかった。36をそろえて、丈夫な部品を完成させよう！']],
  [[],['風が少し見えてきた！ 次の灯りまで、道をつなごう。','4と7で28。石の並びを見て、準備の仕方を決めるね。'],['雲の下に、森が見えるよ！ モスも見上げているかな？','みんなの素材を乗せて飛ぶんだ。4と8で32を作ろう！'],['横風が来るよ。飛行装置を調整しよう！','フレアの炉で覚えた36だね。落ち着いてやれば大丈夫。'],['出発台の灯りまで、もう少し！','6と8で48。足し算で石を育てて、最後は掛け算！'],['最後は「64」！ これで空への道が全部つながるよ。','8と8を用意するんだね。おじいちゃん、もうすぐ迎えに行くよ！']]
 ];
-export function stageStory(stage){const c=stage.chapter;const lines=stage.step===0?[...openings[c]]:[G(c,middles[c][stage.step][0]),L(middles[c][stage.step][1])];lines.push(G(c,`「${stage.target}」の力を${stage.count}回、集めてね。準備ができたら、はじめよう！`));return {title:`第${c+1}章 ${chapters[c].name} · ${c+1}-${stage.step+1}`,scene:c+1,partner:chapters[c].guardian,goal:`${stage.target} を ${stage.count}回つくろう`,lines};}
+export function stageStory(stage){const c=stage.chapter;const lines=stage.step===0?[...openings[c]]:[G(c,middles[c][stage.step][0]),L(middles[c][stage.step][1])];if(stage.step===0){const at=lines.findIndex(row=>row.who===chapters[c].guardian);lines[at]={...lines[at],expression:'emotion'};}lines.push(G(c,`「${stage.target}」の力を${stage.count}回、集めてね。準備ができたら、はじめよう！`));return {title:`第${c+1}章 ${chapters[c].name} · ${c+1}-${stage.step+1}`,scene:c+1,partner:chapters[c].guardian,goal:`${stage.target} を ${stage.count}回つくろう`,lines};}
 const rewards=[
  ['水車が回った！ 小さな芽も、うれしそうだよ。','モスが水の道を教えてくれたおかげだよ。','この倒れた木、軽くて丈夫なんだ。翼に使ってほしいな。','ありがとう！ 森の風も、一緒に乗せて飛ぶね！'],
  ['船が出たよ！ 港に、みんなの声が戻ってきた！','シェル、あっちの船から手を振ってるよ。','この潮に強い合金を持っていって！ 飛行機の胴体にぴったりだよ。','ありがとう！ 空からこの港を見つけたら、ぼくも手を振るね！'],
@@ -36,4 +36,4 @@ const rewards=[
  ['全部ついた！ ほら、雲の中に道が見えるよ！','森で6を作ったときは、ここまで来られるなんて思わなかったよ。','この飛行装置をつけたら完成！ きみがつないだのは、数字だけじゃないね。','モスも、シェルも、クリムも、フレアも、フウも。みんなの力だ！']
 ];
 export function chapterEnding(chapter){return {title:`第${chapter+1}章 · ありがとう、${chapters[chapter].guardian}`,scene:chapter+1,partner:chapters[chapter].guardian,lines:rewards[chapter].map((text,i)=>i%2?L(text):G(chapter,text))};}
-export const epilogue={title:'雲の、その先へ',scene:5,partner:'トトじい',lines:[L('おじいちゃん、約束の飛行機ができたよ！ 最初のお客さんになって！'),line('トトじい','立派な飛行機じゃ。集めた素材のひとつひとつに、友達の顔が見えるようじゃな。'),L('みんなの困りごとを、数字をつないで直してきたんだ。ぼく一人じゃ、できなかったよ。'),line('トトじい','さあ、ルカ船長。次はどこへ行こうか？'),L('見て！ 雲の向こうに、新しい島！ あそこへ行ってみよう！')]};
+export const epilogue={title:'雲の、その先へ',scene:5,partner:'トトじい',lines:[L('おじいちゃん、約束の飛行機ができたよ！ 最初のお客さんになって！'),line('トトじい','立派な飛行機じゃ。集めた素材のひとつひとつに、友達の顔が見えるようじゃな。'),L('みんなの困りごとを、数字をつないで直してきたんだ。ぼく一人じゃ、できなかったよ。'),line('トトじい','さあ、ルカ船長。次はどこへ行こうか？','emotion'),L('見て！ 雲の向こうに、新しい島！ あそこへ行ってみよう！')]};

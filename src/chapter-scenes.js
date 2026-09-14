@@ -1,3 +1,4 @@
+import {assemblyShowcase,assemblyNames,partArt,collectionStrip} from './airplane.js';
 import {chapters} from './data.js';
 
 const subtitles=[
@@ -10,10 +11,10 @@ const subtitles=[
 let active=null;
 
 /** A chapter boundary owns focus until an explicit action, never a timer. */
-export function showChapterScene(index,{clear=false,completed=[],onNext,onMap}={}){
+export function showChapterScene(index,{clear=false,completed=[],previous=completed,paint=0,onNext,onMap}={}){
  active?.();
  const chapter=chapters[index],scene=index+1;
- const previous=document.activeElement;
+ const previousFocus=document.activeElement;
  const root=document.createElement('dialog');
  root.className=`chapter-dialog ${clear?'chapter-victory':'chapter-arrival'}`;
  root.setAttribute('aria-label',clear?`第${index+1}章 クリア`:`第${index+1}章 ${chapter.name}`);
@@ -28,15 +29,18 @@ export function showChapterScene(index,{clear=false,completed=[],onNext,onMap}={
    <h1>${chapter.name}</h1>
    <div class="chapter-rule" aria-hidden="true">✦</div>
    ${clear?`<p class="chapter-complete">第${index+1}章 · 全6ステージ クリア！</p>
-   <div class="chapter-reward"><span class="chapter-reward-star" aria-hidden="true">✦</span><div><small>飛行機の部品を手に入れた！</small><strong>${chapter.part}</strong><span>${chapter.material}</span></div></div>
+   ${assemblyShowcase({completed,previous,paint,index,animate:previous.length<completed.length})}<div class="chapter-reward">${partArt(index)}<div><small>飛行機の部品を手に入れた！</small><strong>${chapter.part}</strong><span>${chapter.material}</span></div></div>
    <p class="chapter-thanks">${chapter.guardian}「${chapter.end}」</p>
-   <div class="chapter-parts" aria-label="獲得した部品 ${completed.length} / 5">${chapters.map((c,i)=>`<span class="${completed.includes(i)?'collected':''}" aria-label="${c.part}${completed.includes(i)?'、獲得済み':'、未獲得'}">${completed.includes(i)?'✦':'◇'}</span>`).join('')}<small>${completed.length} / 5 部品</small></div>`:`<p class="chapter-subtitle">${subtitles[index]}</p><p class="chapter-destination">出会う守り手 · ${chapter.guardian}</p>`}
+   <div class="chapter-parts">${collectionStrip(completed)}<small>${completed.length} / 5 部品</small></div>`:`<p class="chapter-subtitle">${subtitles[index]}</p><p class="chapter-destination">出会う守り手 · ${chapter.guardian}</p>`}
    <div class="chapter-controls"><button class="chapter-continue">${clear?(index===4?'おじいちゃんと初飛行へ ▸':`第${index+2}章へ ▸`):'物語をはじめる ▸'}</button>${clear?'<button class="chapter-map">冒険の地図へ</button>':''}</div>
   </div>
  </section>`;
  root.querySelector('.chapter-landscape').style.backgroundPosition=`${scene%3*50}% ${Math.floor(scene/3)*100}%`;
- let closed=false;
- function close(){if(closed)return;closed=true;root.close();root.remove();active=null;if(previous?.isConnected)previous.focus({preventScroll:true});}
+ let closed=false;const stage=root.querySelector('.assembly-showcase');
+ const finishAssembly=()=>{if(!stage)return;stage.classList.remove('is-assembling');stage.classList.add('assembly-ready');stage.querySelector('.assembly-caption').textContent=assemblyNames[Number(stage.dataset.after)];};
+ stage?.addEventListener('animationend',event=>{if(event.animationName==='part-dock')finishAssembly();});
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)finishAssembly();
+ function close(){if(closed)return;closed=true;root.close();root.remove();active=null;if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});}
  root.addEventListener('click',event=>{const next=event.target.closest('.chapter-continue'),map=event.target.closest('.chapter-map');if(!next&&!map)return;close();(next?onNext:onMap)?.();});
  root.addEventListener('cancel',event=>{event.preventDefault();root.querySelector('.chapter-continue').focus();});
  document.body.append(root);root.showModal();active=close;root.querySelector('.chapter-continue').focus();
