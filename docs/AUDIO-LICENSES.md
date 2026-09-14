@@ -40,17 +40,17 @@ https://creativecommons.org/publicdomain/zero/1.0/
 | click | Interface Sounds | click_003.ogg |
 | back | Interface Sounds | back_001.ogg |
 | select stone | Interface Sounds | glass_001.ogg |
-| merge stones | Interface Sounds | drop_002.ogg |
+| merge stones | Impact Sounds | impactGlass_medium_000.ogg |
 | correct answer | Interface Sounds | confirmation_002.ogg |
-| stage clear | Music Jingles | Sax jingles/jingles_SAX07.ogg |
+| stage clear | Music Jingles | Sax jingles/jingles_SAX02.ogg |
 | hint | Interface Sounds | question_001.ogg |
 | manual shuffle | Interface Sounds | scroll_001.ogg |
 | assembly / customization | Interface Sounds | switch_003.ogg |
 | retry / time up | Interface Sounds | error_003.ogg |
-| chapter clear | Music Jingles | Sax jingles/jingles_SAX07.ogg |
+| chapter clear | Music Jingles | Sax jingles/jingles_SAX02.ogg |
 | chapter arrival / resume | Music Jingles | Steel jingles/jingles_STEEL07.ogg |
 | stage goal announcement | Music Jingles | Pizzicato jingles/jingles_PIZZI02.ogg |
-| discard stones | Interface Sounds | drop_004.ogg |
+
 
 Sources: https://kenney.nl/assets/interface-sounds and
 https://kenney.nl/assets/music-jingles . Both pack pages explicitly state CC0.
@@ -76,4 +76,18 @@ Settings. Copyright and license notices must remain with the recordings.
 - All audio assets ship in the build and are included in the offline cache.
 
 
-Version 0.9 updates clear/chapter to a longer sax jingle and adds chapter arrival, stage announcement and a single-hit discard sound. These five files use 128 kbps mono MP3. All remain CC0 recordings.
+## Version 0.10 — celebration and distinct panel effects
+
+Clear/chapter use the complete ascending `jingles_SAX02.ogg` recording,
+with a quiet 90/180 ms echo tail and a peak limiter. Pitch and melody unchanged.
+Merge uses the resonant `impactGlass_medium_000.ogg` from Kenney Impact Sounds:
+https://kenney.nl/assets/impact-sounds (CC0; `kenney-impact-license.txt` retained).
+
+Discard uses `bfh1_glass_breaking_06.ogg` by **rubberduck**, from
+“75 CC0 breaking / falling / hit sfx” (published 2019-10-08):
+https://opengameart.org/content/75-cc0-breaking-falling-hit-sfx
+Download: https://opengameart.org/sites/default/files/sfx_breaking_and_falling.zip
+The author's asset page explicitly dedicates these sounds under **CC0 1.0**:
+https://creativecommons.org/publicdomain/zero/1.0/
+Full glass-shattering recording, gain reduced to 70%, MP3 128 kbps mono.
+All four replacements use existing CC0 audio; no new music is generated.

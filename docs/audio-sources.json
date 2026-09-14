@@ -83,17 +83,17 @@
       "changes": "Converted OGG to MP3 96 kbps mono; no melody or pitch changes."
     },
     {
-      "title": "drop_002",
+      "title": "impactGlass_medium_000",
       "file": "merge.mp3",
-      "page": "https://kenney.nl/assets/interface-sounds",
+      "page": "https://kenney.nl/assets/impact-sounds",
       "creator": "Kenney",
       "license": "CC0-1.0",
-      "originalFile": "drop_002.ogg",
-      "originalSHA256": "4ac4d1cef7e936965cbf795852ca2020300b9e2ba7daa59f2bf4f1f7bf416218",
-      "sha256": "ae0da5fd1efbe61870fc25e4c5efd05e37668b73305d2901a3b349882156e016",
-      "bytes": 3179,
-      "duration": 0.235102,
-      "changes": "Converted OGG to MP3 96 kbps mono; no melody or pitch changes."
+      "originalFile": "impactGlass_medium_000.ogg",
+      "originalSHA256": "9252d50bfb85edb17d6073c4a7806e10cdb9de56d3dbfc93a4b9727146d2df6d",
+      "sha256": "bd8fd20774badb9fe1ffff052830404d92c5f7e168a82bc029cb2eb3cf8dd212",
+      "bytes": 9657,
+      "duration": 0.574694,
+      "changes": "Full original OGG to 128 kbps mono MP3; no melody or pitch changes. FFmpeg filter: volume=0.8"
     },
     {
       "title": "confirmation_002",
@@ -161,30 +161,30 @@
       "changes": "Converted OGG to MP3 96 kbps mono; no melody or pitch changes."
     },
     {
-      "title": "jingles_SAX07",
+      "title": "jingles_SAX02",
       "file": "clear.mp3",
       "page": "https://kenney.nl/assets/music-jingles",
       "creator": "Kenney",
       "license": "CC0-1.0",
-      "originalFile": "jingles_SAX07.ogg",
-      "originalSHA256": "241c8570fbded819ee0205e4be3efa80aeb834a70df89318da88f9e219798b11",
-      "sha256": "3254a8f10ffeb9bb21d9c4d911678ab2ba89630e572281d6f1054fb6bfd2f29a",
-      "bytes": 28883,
-      "duration": 1.776327,
-      "changes": "Converted original OGG recording to 128 kbps mono MP3. No melody or pitch changes."
+      "originalFile": "jingles_SAX02.ogg",
+      "originalSHA256": "70a6c8cf7d2d391eededdb6121371e01f859130595da08413a28ea0608a82e3f",
+      "sha256": "ecb8e85f5dae0b8f5240660f2f426fc9620e2142e9fefcc8810c9077f7f9b4c1",
+      "bytes": 18016,
+      "duration": 1.097143,
+      "changes": "Full original OGG to 128 kbps mono MP3; no melody or pitch changes. FFmpeg filter: aecho=0.8:0.85:90|180:0.15|0.08,alimiter=limit=0.85:level=false"
     },
     {
-      "title": "jingles_SAX07",
+      "title": "jingles_SAX02",
       "file": "chapter.mp3",
       "page": "https://kenney.nl/assets/music-jingles",
       "creator": "Kenney",
       "license": "CC0-1.0",
-      "originalFile": "jingles_SAX07.ogg",
-      "originalSHA256": "241c8570fbded819ee0205e4be3efa80aeb834a70df89318da88f9e219798b11",
-      "sha256": "3254a8f10ffeb9bb21d9c4d911678ab2ba89630e572281d6f1054fb6bfd2f29a",
-      "bytes": 28883,
-      "duration": 1.776327,
-      "changes": "Converted original OGG recording to 128 kbps mono MP3. No melody or pitch changes."
+      "originalFile": "jingles_SAX02.ogg",
+      "originalSHA256": "70a6c8cf7d2d391eededdb6121371e01f859130595da08413a28ea0608a82e3f",
+      "sha256": "ecb8e85f5dae0b8f5240660f2f426fc9620e2142e9fefcc8810c9077f7f9b4c1",
+      "bytes": 18016,
+      "duration": 1.097143,
+      "changes": "Full original OGG to 128 kbps mono MP3; no melody or pitch changes. FFmpeg filter: aecho=0.8:0.85:90|180:0.15|0.08,alimiter=limit=0.85:level=false"
     },
     {
       "title": "jingles_STEEL07",
@@ -213,17 +213,17 @@
       "changes": "Converted original OGG recording to 128 kbps mono MP3. No melody or pitch changes."
     },
     {
-      "title": "drop_004",
+      "title": "bfh1_glass_breaking_06",
       "file": "discard.mp3",
-      "page": "https://kenney.nl/assets/interface-sounds",
-      "creator": "Kenney",
+      "page": "https://opengameart.org/content/75-cc0-breaking-falling-hit-sfx",
+      "creator": "rubberduck",
       "license": "CC0-1.0",
-      "originalFile": "drop_004.ogg",
-      "originalSHA256": "10738707f9300f9b963ceba46d5da2ed4a221faf7d39484a643c2d3bc151c5f2",
-      "sha256": "7df9da0015c16a82c7f9a8c5a925fd022f96cbc5587d4bb9de3f1fc0d333076b",
-      "bytes": 5477,
-      "duration": 0.313469,
-      "changes": "Converted original OGG recording to 128 kbps mono MP3. No melody or pitch changes."
+      "originalFile": "bfh1_glass_breaking_06.ogg",
+      "originalSHA256": "5dad395c21e85d0750be4b1f9c110aeba366ee5da0dadae8c307497e0a4b4c0d",
+      "sha256": "95d7ec3917c36b506b3993c6f51f622f710f77976568b53e45916a211895c271",
+      "bytes": 15789,
+      "duration": 0.96,
+      "changes": "Full original OGG to 128 kbps mono MP3; no melody or pitch changes. FFmpeg filter: volume=0.7"
     }
   ]
 }

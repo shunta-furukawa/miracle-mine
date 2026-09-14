@@ -1,3 +1,4 @@
+import {victoryEffects} from './celebration.js';
 import {assemblyShowcase,assemblyNames,partArt,collectionStrip} from './airplane.js';
 import {chapters} from './data.js';
 
@@ -23,7 +24,7 @@ export function showChapterScene(index,{clear=false,resume=false,completed=[],pr
   <div class="chapter-field-window" aria-hidden="true"><div class="chapter-landscape"></div></div><div class="chapter-shade" aria-hidden="true"></div>
   <div class="chapter-corners" aria-hidden="true"></div>
   <p class="chapter-location">MIRACLE MINE <span>／ ${chapter.tag}</span></p>
-  ${clear?`<div class="chapter-sparks" aria-hidden="true">${Array.from({length:18},(_,i)=>`<i style="--i:${i};--x:${(i*37+7)%100}%"></i>`).join('')}</div>`:''}
+  ${clear?victoryEffects():''}
   <div class="chapter-presentation">
    <p class="chapter-kicker">${clear?'CHAPTER CLEAR':`${resume?'WELCOME BACK · ':''}CHAPTER ${String(index+1).padStart(2,'0')}`}</p>
    <h1>${chapter.name}</h1>
