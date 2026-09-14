@@ -4,7 +4,7 @@ An approximately 20-second, five-shot opening plays when a new save slot is crea
 
 The final workshop shot holds for seven seconds, followed by an 850 ms fade to true black. The dialogue then fades in over 1.25 seconds (including a short black hold); its first line starts typing after the reveal. The black backdrop lives in the dialogue’s native modal layer to prevent a map flash. Reduced-motion mode transitions immediately.
 
-The player can skip or pause. Hidden pages pause the timeline and camera. Reduced-motion mode uses still images without moving particles. Music and the arrival cue reuse the existing licensed soundtrack and respect the player's sound settings. No video file or synthesized music is used.
+The player can skip or pause. Hidden pages pause the timeline and camera. Reduced-motion mode uses still images without moving particles. Music reuses the existing licensed soundtrack and respect the player's sound settings. No arrival jingle interrupts the prologue. At the start of the final blackout, outgoing music fades out over 850 ms while the dialogue music fades in over 2.1 seconds, spanning blackout and reveal. Skipping uses a shorter 350 ms / 1.25 second crossfade. Reduced-motion transitions are immediate. No video file or synthesized music is used.
 
 Sequence: floating islands → forest waterwheel → harbor → crystal cavern → Luka beside the unfinished wingless airplane. Runtime camera movement and atmospheric layers use CSS/Web Animations; captions remain selectable DOM text. Assets are precached by the existing service worker.
 

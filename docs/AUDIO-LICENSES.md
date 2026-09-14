@@ -48,7 +48,7 @@ https://creativecommons.org/publicdomain/zero/1.0/
 | assembly / customization | Interface Sounds | switch_003.ogg |
 | retry / time up | Interface Sounds | error_003.ogg |
 | chapter clear | Music Jingles | Sax jingles/jingles_SAX02.ogg |
-| chapter arrival / resume | Music Jingles | Steel jingles/jingles_STEEL07.ogg |
+| chapter arrival / resume | Music Jingles | Steel jingles/jingles_STEEL02.ogg |
 | stage goal announcement | Music Jingles | Pizzicato jingles/jingles_PIZZI02.ogg |
 
 
@@ -91,3 +91,7 @@ The author's asset page explicitly dedicates these sounds under **CC0 1.0**:
 https://creativecommons.org/publicdomain/zero/1.0/
 Full glass-shattering recording, gain reduced to 70%, MP3 128 kbps mono.
 All four replacements use existing CC0 audio; no new music is generated.
+
+## Opening transition and chapter arrival
+
+Chapter arrival/resume uses the ascending Steel 02 recording in full, converted to 128 kbps mono MP3 without changing pitch or melody. Prologue playback has no arrival cue; the first chapter introduction before any clear or failure is also silent. Later chapter introductions and resumes retain the new cue. Opening-to-dialogue music overlaps across the visual blackout and reveal, respecting music volume and mute preferences.

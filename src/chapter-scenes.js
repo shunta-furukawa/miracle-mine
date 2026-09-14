@@ -12,7 +12,7 @@ const subtitles=[
 let active=null;
 
 /** A chapter boundary owns focus until an explicit action, never a timer. */
-export function showChapterScene(index,{clear=false,resume=false,completed=[],previous=completed,paint=0,design={paint},onNext,onMap}={}){
+export function showChapterScene(index,{clear=false,resume=false,silent=false,completed=[],previous=completed,paint=0,design={paint},onNext,onMap}={}){
  active?.();
  const chapter=chapters[index],scene=index+1;
  const previousFocus=document.activeElement;
@@ -44,5 +44,5 @@ export function showChapterScene(index,{clear=false,resume=false,completed=[],pr
  function close(){if(closed)return;closed=true;document.dispatchEvent(new CustomEvent('miracle:chapter',{detail:{open:false}}));root.close();root.remove();active=null;if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});}
  root.addEventListener('click',event=>{const next=event.target.closest('.chapter-continue'),map=event.target.closest('.chapter-map');if(!next&&!map)return;close();(next?onNext:onMap)?.();});
  root.addEventListener('cancel',event=>{event.preventDefault();root.querySelector('.chapter-continue').focus();});
- document.body.append(root);root.showModal();document.dispatchEvent(new CustomEvent('miracle:chapter',{detail:{open:true,clear}}));active=close;root.querySelector('.chapter-continue').focus();
+ document.body.append(root);root.showModal();document.dispatchEvent(new CustomEvent('miracle:chapter',{detail:{open:true,clear,silent}}));active=close;root.querySelector('.chapter-continue').focus();
 }

@@ -64,7 +64,7 @@ export class Soundtrack{
    if(results.some(r=>r.status==='rejected'))this.effectsPreloaded=false;
   });
  }
- setScene(scene){this.scene=scene;this.reconcile();}
+ setScene(scene,transition={}){this.scene=scene;this.transition=transition;this.reconcile();}
  wanted(){return this.scene==='game'?'puzzle':['slots','map','workshop'].includes(this.scene)?'workshop':'title';}
  ramp(param,value,seconds=.18){
   const now=this.context.currentTime;
@@ -72,14 +72,14 @@ export class Soundtrack{
   else{param.cancelScheduledValues(now);param.setValueAtTime(param.value,now);}
   param.linearRampToValueAtTime(value,now+seconds);
  }
- mix(immediate=false){
+ mix(immediate=false,seconds=.18){
   if(!this.context)return;
   const music=(this.settings.music?this.settings.musicVolume:0)*(this.ducks.size ? .3 : 1);
   const sound=this.settings.sound?this.settings.soundVolume:0;
   if(immediate){this.musicBus.gain.value=music;this.soundBus.gain.value=sound;}
-  else{this.ramp(this.musicBus.gain,music);this.ramp(this.soundBus.gain,sound);}
+  else{this.ramp(this.musicBus.gain,music,seconds);this.ramp(this.soundBus.gain,sound);}
  }
- duck(reason,enabled){if(enabled)this.ducks.add(reason);else this.ducks.delete(reason);this.mix();}
+ duck(reason,enabled,seconds=.18){if(this.ducks.has(reason)===enabled)return;if(enabled)this.ducks.add(reason);else this.ducks.delete(reason);this.mix(false,seconds);}
  stopTrack(voice,fade=.65){
   if(!voice||voice.stopping)return;voice.stopping=true;
   this.offsets.set(voice.key,(voice.offset+this.context.currentTime-voice.started)%voice.source.buffer.duration);
@@ -106,8 +106,9 @@ export class Soundtrack{
    source.buffer=buffer;source.loop=true;gain.gain.value=0;source.connect(gain);gain.connect(this.musicBus);
    const voice={key,source,gain,started:this.context.currentTime,offset:this.offsets.get(key)||0};
    source.onended=()=>{source.disconnect();gain.disconnect();this.musicVoices.delete(voice);};
-   this.stopTrack(this.track);this.musicVoices.add(voice);this.track=voice;
-   source.start(0,voice.offset%buffer.duration);this.ramp(gain.gain,1,.65);
+   const {fadeOut=.65,fadeIn=.65}=this.transition||{};
+   this.stopTrack(this.track,fadeOut);this.musicVoices.add(voice);this.track=voice;
+   source.start(0,voice.offset%buffer.duration);this.ramp(gain.gain,1,fadeIn);
    this.onChange();
   }catch{this.onChange();}finally{if(request===this.musicRequest)this.loadingTrack=null;}
  }

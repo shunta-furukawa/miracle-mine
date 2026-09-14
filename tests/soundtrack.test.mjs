@@ -10,7 +10,7 @@ test('legacy mute defaults both channels off; corrupt preferences are bounded',(
 
 const flush=()=>new Promise(r=>setImmediate(r));
 const deferred=()=>{let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve}};
-class Parameter{constructor(){this.value=1}cancelAndHoldAtTime(){}linearRampToValueAtTime(v){this.value=v}}
+class Parameter{constructor(){this.value=1}cancelAndHoldAtTime(){}linearRampToValueAtTime(v,time){this.value=v;this.endTime=time}}
 class Context{
  constructor(){this.state='running';this.currentTime=10;this.destination={};this.started=[]}
  createGain(){return {gain:new Parameter(),connect(){},disconnect(){}}}
@@ -31,7 +31,12 @@ test('audio races and preference storage never alter adventure data',async()=>{
   audio.setScene('game');audio.setScene('title');pending.resolve(buffer);await flush();
   assert.equal(audio.track.key,'title','late puzzle load must not replace the title after returning');
   assert.equal(audio.context.started.length,1);
-  audio.setScene('workshop');await flush();assert.equal(audio.track.key,'workshop');
+  const outgoing=audio.track;
+  audio.setScene('workshop',{fadeOut:.85,fadeIn:2.1});audio.duck('story',true,2.1);await flush();assert.equal(audio.track.key,'workshop');
+  assert.equal(outgoing.gain.gain.value,0);assert.equal(outgoing.gain.gain.endTime,10.85);
+  assert.equal(audio.track.gain.gain.value,1);assert.equal(audio.track.gain.gain.endTime,12.1);
+  assert.equal(audio.musicBus.gain.endTime,12.1);
+  audio.duck('story',true);assert.equal(audio.musicBus.gain.endTime,12.1,'dialogue opening must not shorten the music fade');
   audio.configure({music:false,musicVolume:.25,soundVolume:.35});
   assert.equal(audio.track,null);assert.equal(storage.get('miracle-mine:v1'),slots);
   assert.equal(JSON.parse(storage.get(AUDIO_KEY)).musicVolume,.25);
