@@ -135,3 +135,35 @@ header h2,.hangar-heading h2,.hangar-custom h3,.chapter-info h3{font-family:var(
  .illustrated-title .title-bottom .menu-art{width:24px;height:24px}
  .illustrated-title .title-bottom>span{width:100%;margin:6px 0 0;text-align:center;font-size:9px}
 }
+/* Give the title mark more room and bring the portrait cast into the foreground. */
+.illustrated-title h1.title-logo{width:min(100%,450px)}
+.illustrated-title .title-bottom{flex-wrap:wrap}
+.illustrated-title .title-bottom .title-tag{flex-basis:100%;margin:0 0 2px;text-align:left;font-size:12px}
+.illustrated-title{padding-bottom:calc(106px + var(--safe-bottom))}
+header .subtle{display:inline-flex;align-items:center;gap:7px}header .menu-art{width:26px;height:26px}
+.chapter-art{display:inline-block;flex:none;width:70px;height:70px;background:url('./assets/chapter-icons.webp') var(--icon-x) var(--icon-y)/300% 200% no-repeat;vertical-align:middle}
+.chapter-info{gap:14px}.chapter{grid-template-columns:320px 1fr}
+.map-heading>div:last-child{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.map-heading button[data-action="workshop"]{display:inline-flex;align-items:center;gap:8px}.map-heading button .chapter-art{width:32px;height:32px}
+@media(max-height:600px) and (orientation:landscape){
+ .illustrated-title h1.title-logo{width:min(300px,55vh)}
+ .illustrated-title{padding-top:calc(6px + var(--safe-top));padding-bottom:calc(72px + var(--safe-bottom))}
+ .illustrated-title .title-bottom .title-tag{font-size:10px;margin:0}
+ .illustrated-title .title-bottom{gap:6px 12px}
+ .illustrated-title .kana{margin-bottom:5px}
+}
+@media(max-width:900px){.chapter{grid-template-columns:1fr}.chapter-art{width:60px;height:60px}}
+@media(orientation:portrait){
+ .illustrated-title h1.title-logo{width:min(80vw,330px)}
+ .illustrated-title{padding-bottom:calc(14px + var(--safe-bottom))}
+ .title-portrait-scene{height:clamp(205px,30svh,350px);background-size:auto 145%;background-position:right 43%;margin-top:-8px}
+ .illustrated-title .title-bottom{margin-top:14px}
+ .illustrated-title .title-bottom .title-tag{text-align:center;margin:0 0 4px;font-size:12px}
+}
+.illustrated-title .title-bottom .title-tag{color:#fff0ce;text-shadow:0 2px 5px #082629}
+@media(max-height:600px) and (orientation:landscape){
+ .illustrated-title h1.title-logo{width:min(300px,50vh)}
+ .illustrated-title{padding-bottom:calc(50px + var(--safe-bottom))}
+ .illustrated-title .title-bottom .title-tag{flex-basis:auto;order:1;margin-left:8px;font-size:10px}
+ .illustrated-title .title-bottom>span{order:2}
+}
