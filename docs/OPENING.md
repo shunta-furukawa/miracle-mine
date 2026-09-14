@@ -1,6 +1,8 @@
 # Illustrated opening
 
-A 15-second, five-shot opening plays when a new save slot is created, before the existing prologue dialogue. Existing slots bypass it automatically; the map's 「はじまりの物語」 button replays it. No save schema, rankings, or existing progress is changed.
+An approximately 20-second, five-shot opening plays when a new save slot is created, before the existing prologue dialogue. Existing slots bypass it automatically; the map's 「はじまりの物語」 button replays it. No save schema, rankings, or existing progress is changed.
+
+The final workshop shot holds for seven seconds, followed by an 850 ms fade to true black. The dialogue then fades in over 1.25 seconds (including a short black hold); its first line starts typing after the reveal. The black backdrop lives in the dialogue’s native modal layer to prevent a map flash. Reduced-motion mode transitions immediately.
 
 The player can skip or pause. Hidden pages pause the timeline and camera. Reduced-motion mode uses still images without moving particles. Music and the arrival cue reuse the existing licensed soundtrack and respect the player's sound settings. No video file or synthesized music is used.
 

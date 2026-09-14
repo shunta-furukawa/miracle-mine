@@ -52,7 +52,7 @@ function deleteSlot(){
  app.querySelector(`[data-action="slot:${index}"]`).focus();
 }
 function openSlot(i){slot=i;if(!data.slots[slot]){data.slots[slot]=freshSlot();persist();map();opening();}else{map();if(voyageUnlocked(data.slots[slot]))return;const next=stages.find(t=>!data.slots[slot].cleared.includes(t.id))||stages[29];showChapterScene(next.chapter,{resume:true,onNext:()=>{}});}}
-function conversation(story,done=()=>{}){const g=game;if(g)g.paused=true;pointer=null;soundtrack.duck('story',true);showDialogue(story,()=>{soundtrack.duck('story',false);last=performance.now();if(game===g&&g&&!g.over)g.paused=false;done();});}
+function conversation(story,done=()=>{},options={}){const g=game;if(g)g.paused=true;pointer=null;soundtrack.duck('story',true);showDialogue(story,()=>{soundtrack.duck('story',false);last=performance.now();if(game===g&&g&&!g.over)g.paused=false;done();},options);}
 function unlocked(i){return i===0||data.slots[slot]?.cleared.includes(i-1);}
 const chapterIcon=n=>`<i class="chapter-art" aria-hidden="true" style="--icon-x:${n%3*50}%;--icon-y:${Math.floor(n/3)*100}%"></i>`;
 function map(){game=null;closeModal(false);setScreen('map');const s=data.slots[slot];app.innerHTML=`<section class="page map-page">${chrome(`工房 ${slot+1} · 冒険の地図`,'slots')}<div class="map-heading"><div><p class="eyebrow">THE JOURNEY TO THE SKY</p><h3>素材をあつめて、空へ。</h3></div><div>${button('はじまりの物語','prologue','subtle')}${button(chapterIcon(5)+'蒸気飛行機の工房','workshop','primary')}</div></div><div class="chapter-list">${chapters.map((c,ci)=>`<article class="chapter parchment" style="--chapter-color:${c.color}"><div class="chapter-info">${chapterIcon(ci)}<div><small>CHAPTER ${ci+1} / ${c.tag}</small><h3>${c.name}</h3><p>${c.part} · ${s.cleared.includes(ci*6+5)?'獲得済み':'素材を探そう'}</p></div></div><div class="stage-list">${stages.slice(ci*6,ci*6+6).map(t=>`<button data-action="stage:${t.id}" ${!unlocked(t.id)?'disabled':''} class="stage ${s.cleared.includes(t.id)?'cleared':''} ${unlocked(t.id)&&!s.cleared.includes(t.id)?'next':''}" aria-label="${ci+1}-${t.step+1} ${t.name} 目標${t.target}"><b>${unlocked(t.id)?`${ci+1}-${t.step+1}`:'⌑'}</b><small>${s.cleared.includes(t.id)?'✓':`${t.target} をつくる`}</small></button>`).join('')}</div></article>`).join('')}</div>${voyageUnlocked(s)?skyMapCard(s):''}<p class="muted">${s.cleared.length} / 30 ステージクリア · 好きなステージをもう一度遊べます</p></section>`;refreshStandings();}
@@ -168,4 +168,4 @@ async function refreshStandings(){
  }));
 }
 
-function opening(){soundtrack.setScene('flight');soundtrack.play('arrival');showOpening(()=>{soundtrack.setScene(screen);conversation(prologue);});}
+function opening(){soundtrack.setScene('flight');soundtrack.play('arrival');showOpening(()=>{soundtrack.setScene(screen);conversation(prologue,()=>{},{fadeIn:true});});}

@@ -244,3 +244,12 @@ body[data-screen=game]{background:#173a3d}.game-screen{isolation:isolate}.game-s
 @media(orientation:landscape) and (max-height:600px){.opening-top{top:20px}.opening-caption{bottom:49px}.opening-caption p{margin-bottom:6px;font-size:9px}.opening-caption h2{font-size:25px}.opening-progress{bottom:26px}}
 @media(orientation:portrait){.opening-caption{left:7%;right:7%;bottom:max(94px,calc(env(safe-area-inset-bottom) + 65px))}.opening-caption h2{font-size:25px;line-height:1.9}.opening-caption p{font-size:9px;letter-spacing:.13em}.opening-progress{left:25%;right:25%;bottom:max(56px,calc(env(safe-area-inset-bottom) + 34px))}.opening-film[data-scene='4'] .opening-art{background-position:46% center}}
 @media(prefers-reduced-motion:reduce){.opening-shot{transition:none}.opening-clouds,.opening-dust i{animation:none}.opening-dust{display:none}}
+
+/* End the prologue in true black, then reveal the dialogue in its modal layer. */
+.opening-blackout{position:absolute;inset:0;background:#000;opacity:0;z-index:10;pointer-events:none}
+.opening-film.is-ending .opening-pause{visibility:hidden}
+.story-dialog.story-from-black{background:#000}
+.story-dialog.story-from-black::backdrop{background:#000}
+.story-from-black .story-scene{animation:story-reveal 1250ms ease-in-out both}
+@keyframes story-reveal{0%,12%{opacity:0}100%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.story-from-black .story-scene{animation:none}}
