@@ -1,28 +1,38 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {randomUUID} from 'node:crypto';
-import {PGlite} from '@electric-sql/pglite';import {schema,service} from '../server/ranking.js';
+import {PGlite} from '@electric-sql/pglite';import {schema,service,CURRENT_SEASON,SEASONS} from '../server/ranking.js';import {voyageStage,SKY_PROTOCOL} from '../src/sky-voyage.js';
 import {RankingClient,OUTBOX} from '../src/ranking.js';import {normalize,freshSlot} from '../src/save.js';
 const store=()=>{const m=new Map();return {getItem:k=>m.get(k)||null,setItem:(k,v)=>m.set(k,v)}};
-test('real SQL: goal order, duplicates, concurrent targets, finalization and snapshot records',async()=>{
+test('real SQL: seeded goals, seasons, goal order, duplicates, concurrent targets, finalization and snapshot records',async()=>{
  const db=new PGlite();try{for(const sql of schema)await db.exec(sql);const query=async(s,p)=>(await db.query(s,p)).rows,api=service(query),key='a'.repeat(64);
  const uid=(await api('register',{completed:true},key)).uid;assert.equal((await api('register',{completed:true},key)).uid,uid);await assert.rejects(api('register',{completed:false},'b'.repeat(64)),/LOCKED/);
- const runId=randomUUID(),design={paint:2,wing:1,propeller:2,decoration:1};await api('start',{runId,name:'そらいろ号',design,protocol:1},key);
- assert.deepEqual(await api('standing',{},key),{rank:null,distance:0});await assert.rejects(api('standing',{},'f'.repeat(64)),/AUTH/);
- await assert.rejects(api('goal',{runId,seq:1,level:0,target:81},'f'.repeat(64)),/AUTH/);
- for(const e of [{seq:1,level:0,target:81},{seq:1,level:0,target:81},{seq:2,level:0,target:81},{seq:3,level:2,target:144}])await api('goal',{runId,...e},key);
+ const status=await api('status');assert.equal(status.protocol,SKY_PROTOCOL);assert.equal(status.season.id,CURRENT_SEASON.id);assert.equal(status.seasons.length,SEASONS.length);
+ await assert.rejects(api('start',{runId:randomUUID(),name:'古い版',design:{},protocol:1},key),/VERSION/);
+ const runId=randomUUID(),design={paint:2,wing:1,propeller:2,decoration:1};const started=await api('start',{runId,name:'そらいろ号',design,protocol:SKY_PROTOCOL},key);
+ assert.equal(started.protocol,SKY_PROTOCOL);assert(Number.isInteger(started.seed)&&started.seed>=0);assert.equal(started.season.id,CURRENT_SEASON.id);
+ assert.equal((await api('start',{runId,name:'そらいろ号',design,protocol:SKY_PROTOCOL},key)).seed,started.seed);
+ const goal=level=>voyageStage(started.seed,level).target;
+ assert.deepEqual(await api('standing',{},key),{season:{id:CURRENT_SEASON.id,name:CURRENT_SEASON.name,protocol:SKY_PROTOCOL,current:true},rank:null,distance:0});await assert.rejects(api('standing',{},'f'.repeat(64)),/AUTH/);
+ await assert.rejects(api('goal',{runId,seq:1,level:0,target:goal(0)},'f'.repeat(64)),/AUTH/);
+ const fresh=randomUUID();const s2=await api('start',{runId:fresh,name:'そらいろ号',design,protocol:SKY_PROTOCOL},key);const g2=level=>voyageStage(s2.seed,level).target;
+ for(const e of [{seq:1,level:0,target:g2(0)},{seq:1,level:0,target:g2(0)},{seq:2,level:0,target:g2(0)},{seq:3,level:2,target:g2(2)}])await api('goal',{runId:fresh,...e},key);const total=g2(0)*2+g2(2);
  assert.equal((await api('board')).entries.length,0);
- await api('finish',{runId,count:3,distance:306,reason:'return'},key);await api('finish',{runId,count:3,distance:306,reason:'return'},key);
- let row=(await api('board')).entries[0];assert.deepEqual(await api('standing',{},key),{rank:1,distance:306});assert.equal(row.distance,306);assert.equal(row.name,'そらいろ号');assert.deepEqual(row.design,design);assert(!('key'in row));assert(!('secret_hash'in row));
- const other=(await api('register',{completed:true},'b'.repeat(64))).uid;await query('INSERT INTO mm_bests(uid,distance,snapshot) VALUES($1,999,$2::jsonb)',[other,JSON.stringify({name:'上位の機体',design:{}})]);assert.deepEqual(await api('standing',{},key),{rank:2,distance:306});await query('DELETE FROM mm_bests WHERE uid=$1',[other]);
- const shorter=randomUUID();await api('start',{runId:shorter,name:'別の名前',design:{},protocol:1},key);await api('goal',{runId:shorter,seq:1,level:0,target:81},key);await api('finish',{runId:shorter,count:1,distance:81,reason:'steam'},key);assert.equal((await api('board')).entries[0].name,'そらいろ号');
- const bad=randomUUID();await api('start',{runId:bad,name:'不正',protocol:1},key);await assert.rejects(api('goal',{runId:bad,seq:1,level:0,target:9999},key),/INVALID/);await assert.rejects(api('finish',{runId:bad,count:0,distance:0,reason:'return'},key),/INVALID/);assert.equal((await api('board')).entries[0].distance,306);
- const missed=randomUUID();await api('start',{runId:missed,name:'未完了',protocol:1},key);await assert.rejects(api('goal',{runId:missed,seq:2,level:1,target:108},key),/INVALID/);
- const inflated=randomUUID();await api('start',{runId:inflated,name:'水増し',protocol:1},key);await assert.rejects(api('finish',{runId:inflated,count:0,distance:999,reason:'return'},key),/INVALID/);
+ await api('finish',{runId:fresh,count:3,distance:total,reason:'return'},key);await api('finish',{runId:fresh,count:3,distance:total,reason:'return'},key);
+ let board=await api('board');let row=board.entries[0];assert.equal(board.season.id,CURRENT_SEASON.id);assert.equal((await api('standing',{},key)).rank,1);assert.equal((await api('standing',{},key)).distance,total);assert.equal(row.distance,total);assert.equal(row.name,'そらいろ号');assert.deepEqual(row.design,design);assert(!('key'in row));assert(!('secret_hash'in row));assert(!('seed'in row));assert(!('season'in row));
+ // Season 1 keeps its own board and is never written by the new protocol.
+ await query('INSERT INTO mm_bests(uid,distance,snapshot) VALUES($1,777,$2::jsonb)',[uid,JSON.stringify({name:'むかしの機体',design})]);const old=await api('board',{season:1});assert.equal(old.season.id,1);assert.equal(old.season.current,false);assert.equal(old.entries[0].distance,777);assert.equal((await api('board',{season:'1'})).entries.length,1);await assert.rejects(api('board',{season:99}),/SEASON/);assert.equal((await api('board',{season:''})).season.id,CURRENT_SEASON.id);
+ const other=(await api('register',{completed:true},'b'.repeat(64))).uid;await query('INSERT INTO mm_season_bests(season,uid,distance,snapshot) VALUES($1,$2,99999999,$3::jsonb)',[CURRENT_SEASON.id,other,JSON.stringify({name:'上位の機体',design:{}})]);assert.equal((await api('standing',{},key)).rank,2);await query('DELETE FROM mm_season_bests WHERE uid=$1',[other]);
+ const shorter=randomUUID();const s3=await api('start',{runId:shorter,name:'別の名前',design:{},protocol:SKY_PROTOCOL},key);const g3=voyageStage(s3.seed,0).target;await api('goal',{runId:shorter,seq:1,level:0,target:g3},key);await api('finish',{runId:shorter,count:1,distance:g3,reason:'steam'},key);assert.equal((await api('board')).entries[0].name,'そらいろ号');
+ const bad=randomUUID();await api('start',{runId:bad,name:'不正',protocol:SKY_PROTOCOL},key);await assert.rejects(api('goal',{runId:bad,seq:1,level:0,target:9999999},key),/INVALID/);await assert.rejects(api('finish',{runId:bad,count:0,distance:0,reason:'return'},key),/INVALID/);assert.equal((await api('board')).entries[0].distance,total);
+ const missed=randomUUID();const s4=await api('start',{runId:missed,name:'未完了',protocol:SKY_PROTOCOL},key);await assert.rejects(api('goal',{runId:missed,seq:2,level:1,target:voyageStage(s4.seed,1).target},key),/INVALID/);
+ const inflated=randomUUID();await api('start',{runId:inflated,name:'水増し',protocol:SKY_PROTOCOL},key);await assert.rejects(api('finish',{runId:inflated,count:0,distance:999,reason:'return'},key),/INVALID/);
+ // A voyage whose seed sequence differs from what the server issued is rejected.
+ const forged=randomUUID();const s5=await api('start',{runId:forged,name:'別シード',protocol:SKY_PROTOCOL},key);let wrong=voyageStage((s5.seed+1)>>>0,0).target;if(wrong===voyageStage(s5.seed,0).target)wrong+=1;await assert.rejects(api('goal',{runId:forged,seq:1,level:0,target:wrong},key),/INVALID/);
  }finally{await db.close()}
 });
 test('goal queue never waits for network; final notification follows all acks and survives reload',async()=>{
  const storage=store(),calls=[];let release;const gate=new Promise(r=>release=r);let held=true;
- const request=async(url,options)=>{const action=new URL(url,'https://game.test').searchParams.get('action');calls.push(action);if(action==='goal'&&held){held=false;await gate}return {ok:true,json:async()=>action==='register'?{uid:randomUUID()}:{}}};
- const client=new RankingClient({storage,request}),s={...freshSlot(),cleared:Array.from({length:30},(_,i)=>i),flightName:'テスト号'};const run=await client.begin(s,()=>true);
+ const request=async(url,options)=>{const action=new URL(url,'https://game.test').searchParams.get('action');calls.push(action);if(action==='goal'&&held){held=false;await gate}return {ok:true,json:async()=>action==='register'?{uid:randomUUID()}:action==='start'?{runId:'x',protocol:SKY_PROTOCOL,seed:42,season:{id:2}}:{}}};
+ const client=new RankingClient({storage,request}),s={...freshSlot(),cleared:Array.from({length:30},(_,i)=>i),flightName:'テスト号'};const run=await client.begin(s,()=>true);assert.equal(run.seed,42);assert.equal(run.season,2);
  client.goal(run,0,81);client.goal(run,1,108);client.finish(run,'return');assert.equal(run.count,2);assert.equal(run.distance,189);assert.equal(run.events.length,3);assert(!calls.includes('finish'));const snapshot=storage.getItem(OUTBOX);release();while(client.running)await new Promise(r=>setTimeout(r,5));assert.equal(run.status,'finished');assert.deepEqual(calls.slice(-3),['goal','goal','finish']);
  storage.setItem(OUTBOX,snapshot);const restarted=new RankingClient({storage,request});await restarted.flush();assert.equal(restarted.runs[0].status,'finished');assert.equal(restarted.runs[0].distance,189);
 });

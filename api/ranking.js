@@ -17,7 +17,7 @@ export default async function handler(req,res){
   if((req.method==='GET')!==['status','board'].includes(action))return send(405,{error:'METHOD'});
   if(req.headers['sec-fetch-site']==='cross-site')return send(403,{error:'ORIGIN'});
   if(Number(req.headers['content-length']||0)>4096)return send(413,{error:'SIZE'});
-  let body=req.body||{};if(typeof body==='string'){if(body.length>4096)return send(413,{error:'SIZE'});try{body=JSON.parse(body)}catch{return send(400,{error:'INPUT'})}}
+  let body=req.method==='GET'?{season:url.searchParams.get('season')}:req.body||{};if(typeof body==='string'){if(body.length>4096)return send(413,{error:'SIZE'});try{body=JSON.parse(body)}catch{return send(400,{error:'INPUT'})}}
   if(!body||typeof body!=='object'||Array.isArray(body))return send(400,{error:'INPUT'});
   const db=await database(),result=await service(db)(action,body,(req.headers.authorization||'').replace(/^Bearer /,''));return send(200,result);
  }catch(e){return send(e instanceof RankError?e.status:503,{error:e instanceof RankError?e.code:'UNAVAILABLE'});}
