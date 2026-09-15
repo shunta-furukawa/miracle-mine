@@ -1,8 +1,12 @@
 # Arithmetic mode feedback
 
+## Taps and traces (0.19.3)
+
+A pointer press always starts from the pressed stone: any earlier selection is dropped unless the press lands on that same stone. A tap (release without moving) only moves the one-stone selection; it never extends a path, so tapping two neighbours in turn never joins them. A commit happens only when the pointer moved and the trace holds two or more stones. Keyboard play is unchanged (Space adds, Enter confirms, the 確定する button confirms a keyboard path).
+
 Addition uses turquoise (#64ffe1), multiplication uses violet (#ce9aff). Image controls retain button labels, aria-pressed and the original multiplication unlock. Selection outline, trace, equation ink and running-value bubbles share the operation theme. Bubbles include + or × as well as color. Each new stone replaces the previous running-value bubble to avoid clutter.
 
-A double tap is two short stationary taps (each <=250 ms, <=12 px travel) on the same stone, released within 320 ms and within 24 px of each other using the same pointer type. It requires a one-stone selection and unlocked multiplication. Toggling preserves that first stone. Slow taps, long presses, drags, cancellation and multi-stone selections cannot toggle. Existing release-to-commit timing has no added delay. Buttons remain available; one-stone selections can also switch via button.
+A double tap is two short stationary taps (each <=250 ms, <=12 px travel) on the same stone, released within 320 ms and within 24 px of each other using the same pointer type. It requires a one-stone selection and unlocked multiplication. Toggling clears the selection, so the next trace can start anywhere. Slow taps, long presses, drags, cancellation and multi-stone selections cannot toggle. Existing release-to-commit timing has no added delay. Buttons remain available; one-stone selections can also switch via button.
 
 Switching produces a colored ring, sparks and an explicit Japanese operation label, using the existing licensed assemble and success samples. Reduced motion shows a static label. Transient effects have no pointer interaction. Each gather animation captures its own operation color, so later mode changes do not recolor an earlier in-flight trace. Saves, score calculations and ranking verification are unchanged.
 
