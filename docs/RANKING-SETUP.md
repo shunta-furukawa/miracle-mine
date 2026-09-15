@@ -16,7 +16,7 @@
 
 ## シーズンとお題の生成（v0.18 / protocol 2）
 
-- ルール変更のたびに新しいシーズンをはじめる。シーズンは `server/ranking.js` の `SEASONS` / `CURRENT_SEASON` で定義し、切り替えは定数の追加とデプロイだけで済む。
+- ルール変更のたびに新しいシーズンをはじめる。シーズンは `server/ranking.js` の `SEASONS` / `CURRENT_SEASON` で定義し、切り替えは定数の追加とデプロイだけで済む。`hidden: true` を付けたシーズンは一覧に出ず、`board&season=N` も404になる（記録はDBに残る）。シーズン1は記録が1件だけなので非表示にしている。表示に戻すときはフラグを外してデプロイする。
 - シーズン1（protocol 1、固定のお題列）の自己ベストは `mm_bests` にそのまま残す。シーズン2以降は `mm_season_bests`（`season, uid` が主キー）に保存する。初回アクセス時に `CREATE TABLE IF NOT EXISTS` で作られ、手動のマイグレーションは不要。
 - `GET /api/ranking?action=status` は `protocol`、現在の `season`、全 `seasons` を返す。`GET /api/ranking?action=board&season=N` で過去シーズンの上位100機を読める（省略時は現在のシーズン）。`standing` は現在のシーズンの順位。
 - 出発（`start`、protocol 2）でサーバーが32bitのシードを発行し、旅の中間情報（`mm_voyages.snapshot`）にシーズン番号と一緒に保存する。クライアントとサーバーは `src/sky-voyage.js` の `voyageGoal(seed, level)` で同じお題列を再現し、ゴールの目標値はサーバー側でこの列と照合する。自己ベストの snapshot にはシードとシーズンは含めない。

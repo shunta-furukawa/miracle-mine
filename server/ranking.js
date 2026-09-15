@@ -1,9 +1,11 @@
 import {randomUUID,createHash,randomBytes} from 'node:crypto';
 import {voyageStage,SKY_PROTOCOL,validSeed} from '../src/sky-voyage.js';
-/* Seasons: a rule change starts a new season with its own board; earlier boards stay readable. Season 1 lives in mm_bests. */
-export const SEASONS=[{id:1,name:'はじまりの空',protocol:1},{id:2,name:'気まぐれな気流',protocol:SKY_PROTOCOL}];
+/* Seasons: a rule change starts a new season with its own board. Earlier boards stay in the database and are
+   listed unless `hidden` is set, which keeps a season out of the game entirely without deleting its records. */
+export const SEASONS=[{id:1,name:'はじまりの空',protocol:1,hidden:true},{id:2,name:'気まぐれな気流',protocol:SKY_PROTOCOL}];
 export const CURRENT_SEASON=SEASONS.at(-1);
-const seasonById=id=>SEASONS.find(s=>s.id===id);
+export const visibleSeasons=()=>SEASONS.filter(s=>!s.hidden||s.id===CURRENT_SEASON.id);
+const seasonById=id=>visibleSeasons().find(s=>s.id===id);
 import {flightName,flightDesign} from '../src/flight-profile.js';
 export const schema=[
  `CREATE TABLE IF NOT EXISTS mm_pilots (uid uuid PRIMARY KEY, secret_hash text UNIQUE NOT NULL, created_at timestamptz NOT NULL DEFAULT now())`,
@@ -23,11 +25,11 @@ export function service(query){
  const pilot=async key=>{if(typeof key!=='string'||!/^[a-f0-9]{64}$/.test(key))fail('AUTH',401);const rows=await query('SELECT uid FROM mm_pilots WHERE secret_hash=$1',[hash(key)]);if(!rows.length)fail('AUTH',401);return rows[0].uid;};
  return async function dispatch(action,b={},key=''){
   const seasonInfo=s=>({id:s.id,name:s.name,protocol:s.protocol,current:s.id===CURRENT_SEASON.id});
-  if(action==='status')return {ready:true,protocol:CURRENT_SEASON.protocol,season:seasonInfo(CURRENT_SEASON),seasons:SEASONS.map(seasonInfo)};
+  if(action==='status')return {ready:true,protocol:CURRENT_SEASON.protocol,season:seasonInfo(CURRENT_SEASON),seasons:visibleSeasons().map(seasonInfo)};
   if(action==='board'){
    const season=b.season===undefined||b.season===null||b.season===''?CURRENT_SEASON:seasonById(Number(b.season));if(!season)fail('SEASON',404);
    const rows=season.id===1?await query('SELECT uid,distance,snapshot,achieved_at FROM mm_bests ORDER BY distance DESC,achieved_at ASC,uid ASC LIMIT 100',[]):await query('SELECT uid,distance,snapshot,achieved_at FROM mm_season_bests WHERE season=$1 ORDER BY distance DESC,achieved_at ASC,uid ASC LIMIT 100',[season.id]);
-   return {season:seasonInfo(season),seasons:SEASONS.map(seasonInfo),entries:rows.map((r,i)=>({rank:i+1,uid:r.uid,distance:Number(r.distance),name:r.snapshot.name,design:r.snapshot.design,achieved:r.achieved_at}))};
+   return {season:seasonInfo(season),seasons:visibleSeasons().map(seasonInfo),entries:rows.map((r,i)=>({rank:i+1,uid:r.uid,distance:Number(r.distance),name:r.snapshot.name,design:r.snapshot.design,achieved:r.achieved_at}))};
   }
   if(action==='register'){
    if(typeof key!=='string'||!/^[a-f0-9]{64}$/.test(key))fail('AUTH',401);
@@ -52,7 +54,7 @@ export function service(query){
   const rows=await query('SELECT * FROM mm_voyages WHERE id=$1 AND uid=$2',[b.runId,uid]);if(!rows.length)fail('MISSING',404);const run=rows[0];
   if(new Date(run.created_at).getTime()<Date.now()-48*3600000)fail('EXPIRED',410);
   if(run.state==='invalid')fail('INVALID');
-  const season=seasonById(run.snapshot?.season);if(!season||season.id!==CURRENT_SEASON.id||!validSeed(run.snapshot.seed))fail('VERSION',409);
+  const season=SEASONS.find(s=>s.id===run.snapshot?.season);if(!season||season.id!==CURRENT_SEASON.id||!validSeed(run.snapshot.seed))fail('VERSION',409);
   const goalTarget=level=>voyageStage(run.snapshot.seed,level).target;
   const invalid=async()=>{await query("UPDATE mm_voyages SET state='invalid',updated_at=now() WHERE id=$1 AND state='open'",[b.runId]);fail('INVALID');};
   if(action==='goal'){
