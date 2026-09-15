@@ -22,4 +22,4 @@ Character and treasure backgrounds were removed by connected magenta-key extract
 
 ## 第6章 領域カットイン背景（0.18）
 
-`src/assets/sky-regions/` の `clouds.webp`（雲の海）、`afterglow.webp`（夕映えの回廊）、`stars.webp`（星の高み）、`farsky.webp`（果ての空）は、プロジェクトオーナーが既存の空の風景（`sky-world.webp`）を参考画像として画像生成ツールで作成した本プロジェクト用のオリジナルイラスト。1600×900のWebPに変換して同梱し、`sky-regions.js` の全画面カットイン背景として使う。人物・機体・文字は含めない。
+`src/assets/sky-regions/` の `clouds.webp`（雲の海）、`afterglow.webp`（夕映えの回廊）、`stars.webp`（星の高み）、`farsky.webp`（果ての空）は、プロジェクトオーナーが既存の空の風景（`sky-world.webp`）を参考画像として画像生成ツールで作成した本プロジェクト用のオリジナルイラスト。1600×900のWebPに変換して同梱し、`sky-regions.js` の全画面カットイン背景と、その領域を飛んでいる間の空の旅のゲーム背景（`.game-landscape[data-region]`、領域が変わるとクロスフェード）に使う。`sky-world.webp` は出発デッキのカードと共有プレビューで引き続き使う。人物・機体・文字は含めない。
