@@ -1,0 +1,22 @@
+:root{font-family:'Noto Sans JP',system-ui,-apple-system,sans-serif;color:#382917;background:#0f3035;font-synthesis:none}
+body{margin:0;min-height:100svh;background:#183d42 url('/assets/sky-world.webp') center/cover fixed no-repeat}
+.share-landing{max-width:860px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:20px}
+.parchment{background:linear-gradient(120deg,#fff3d9,#efdbb2);border:2px solid #b58a46;border-radius:12px;box-shadow:inset 0 0 0 3px #fff1ce,0 5px 0 #4e351daf,0 12px 30px #07181b40;padding:24px}
+.eyebrow{font-size:12px;letter-spacing:.14em;font-weight:800;color:#926b34;margin:0 0 10px}
+.share-card h1{font-size:clamp(24px,4.5vw,36px);line-height:1.4;margin:0 0 8px}
+.share-caption{margin:0 0 18px;line-height:1.7;font-size:15px;color:#4d3a20}
+.share-figure{margin:0;border:3px solid #b68d49;border-radius:12px;overflow:hidden;background:#0f3035;aspect-ratio:1200/630}
+.share-image{display:block;width:100%;height:100%;object-fit:cover}
+.share-note{font-size:12px;line-height:1.7;color:#6d5a3b;margin:14px 0 0}
+.share-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.share-button{flex:1 1 200px;display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:12px 20px;border:1px solid #a57939;border-radius:8px;background:linear-gradient(#fff4d9,#eed5a6);color:#392918;font-size:17px;font-weight:700;text-decoration:none;box-shadow:0 3px 0 #715126,0 5px 15px #20120433}
+.share-button.primary{background:linear-gradient(#ffe8a8,#e5b95c);border-color:#8a6122}
+.share-button:hover{filter:brightness(1.04)}
+.share-button:active{transform:translateY(2px);box-shadow:0 1px 0 #715126}
+.share-intro h2{font-size:22px;margin:0 0 10px}
+.share-intro p,.share-intro li{line-height:1.8;font-size:15px}
+.share-intro ul{padding-left:1.3em;margin:8px 0}
+.muted{color:#6d5a3b;font-size:13px}
+.share-footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;color:#ffe3a1;font-size:13px;text-shadow:0 2px 5px #000;padding:0 4px}
+.share-footer a{color:inherit;font-weight:700}
+@media(max-width:520px){.parchment{padding:18px 14px}.share-button{font-size:15px}}

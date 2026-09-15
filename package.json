@@ -1,6 +1,6 @@
 {
   "name": "miracle-mine",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -9,10 +9,13 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "preview": "node scripts/preview.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "share-default": "node scripts/share-default.mjs"
   },
   "dependencies": {
-    "@neondatabase/serverless": "1.0.2"
+    "@neondatabase/serverless": "1.0.2",
+    "@vercel/og": "0.8.5",
+    "sharp": "0.35.4"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.8"

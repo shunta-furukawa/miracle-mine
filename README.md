@@ -11,7 +11,7 @@ See [game design](docs/game-design.md) for the approved prototype scope.
 
 ## Development
 
-Node.js 22 or later. No runtime dependencies.
+Node.js 22 or later. Runtime dependencies are used only by the Vercel Functions (`api/`).
 
 ```sh
 npm run build
@@ -42,6 +42,10 @@ Run `npm test` for the puzzle rules, initial solvability and save validation.
 ## Art
 
 `src/assets/` contains original generated artwork approved for this project. The stone atlas is displayed using CSS sprite coordinates. No external asset URLs or paid runtime services are required.
+
+## Sharing (0.17)
+
+Every milestone screen (title, settings, save list, stage/chapter clear, workshop, sky voyage departure and return, treasures, own ranking row) opens a share dialog with a 1200×630 card, an X post link, image download, link copy and the OS share sheet. `/api/share?s=…` serves the landing page with OGP metadata and `&image=1` renders the PNG from the game's own sprites with `@vercel/og` and `sharp`. The URL carries only a public snapshot; see [docs/SHARING.md](docs/SHARING.md).
 
 ## Home-screen app (PWA)
 
