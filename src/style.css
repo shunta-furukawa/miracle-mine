@@ -355,7 +355,7 @@ dialog.region-dialog{width:100vw;max-width:none;height:100dvh;max-height:none;ma
 .region-dialog[data-region="clouds"] .region-backdrop{background-image:url('./assets/sky-regions/clouds.webp')}
 .region-dialog[data-region="afterglow"] .region-backdrop{background-image:url('./assets/sky-regions/afterglow.webp')}
 .region-dialog[data-region="stars"] .region-backdrop{background-image:url('./assets/sky-regions/stars.webp')}
-.region-dialog[data-region="farsky"] .region-backdrop{background-image:url('./assets/sky-regions/stars.webp');filter:hue-rotate(-55deg) saturate(1.15) brightness(.85)}
+.region-dialog[data-region="farsky"] .region-backdrop{background-image:url('./assets/sky-regions/farsky.webp')}
 .region-shade{position:absolute;inset:0;background:linear-gradient(180deg,#0b1c2a44 0%,#0b1c2a11 35%,#0b1c2a99 70%,#0b1c2ae6 100%)}
 .region-corners{position:absolute;inset:14px;border:1px solid #f6d27a66;border-radius:6px;pointer-events:none}
 .region-presentation{position:relative;text-align:center;padding:24px 28px;max-width:680px;animation:region-rise 1s ease-out both}
