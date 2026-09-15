@@ -253,3 +253,5 @@ body[data-screen=game]{background:#173a3d}.game-screen{isolation:isolate}.game-s
 .story-from-black .story-scene{animation:story-reveal 1250ms ease-in-out both}
 @keyframes story-reveal{0%,12%{opacity:0}100%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.story-from-black .story-scene{animation:none}}
+
+button.own-standing{cursor:pointer;text-align:left;font:inherit;min-height:44px}button.own-standing:hover{filter:brightness(1.08)}button.own-standing:focus-visible{outline:3px solid #fff2b5;outline-offset:4px}.save-slot>button.own-standing{width:100%;margin-top:10px}.own-standing .standing-link{font-size:12px;text-decoration:underline;text-underline-offset:3px}
