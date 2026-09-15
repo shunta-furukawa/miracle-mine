@@ -16,13 +16,23 @@ export function showDialogue(story,onDone,{fadeIn=false}={}){
  function paint(){q('.story-words').textContent=chars.slice(0,visible).join('');const typing=visible<chars.length;root.classList.toggle('is-typing',typing);q('.story-next').textContent=typing?'全文を表示 ▸':index===story.lines.length-1?(story.goal?'パズルをはじめる ▸':'つづける ▸'):'次へ ▸';}
  function draw(){clearInterval(timer);const line=story.lines[index];chars=Array.from(line.text);visible=reduced?chars.length:0;q('.story-speaker').textContent=line.who;q('.story-accessible').textContent=`${line.who}。${line.text}`;q('.story-count').textContent=`${index+1} / ${story.lines.length} · タップ / Enter で進む`;
  const left=line.who==='ルカ';sprite(q('.story-left'),left?0:7);const right=q('.story-right'),base=portraits[story.partner]-1;
- if(left||line.expression==='emotion'){const n=base+(left?0:6);right.classList.add('expression-portrait');right.style.backgroundPosition=`${n%3*50}% ${Math.floor(n/3)/3*100}%`;}else sprite(right,portraits[story.partner]);
+ if(left||line.expression==='emotion'){const n=base+(left?0:6);right.classList.add('expression-portrait');right.style.backgroundPosition=`${n%3*50}% ${[0,362,710,1050][Math.floor(n/3)]/1086*100}%`;}else sprite(right,portraits[story.partner]);
  right.dataset.expression=left?'listen':line.expression||'talk';q('.story-left').classList.toggle('speaking',left);q('.story-right').classList.toggle('speaking',!left);paint();if(!reduced&&!entering)timer=setInterval(()=>{visible=Math.min(chars.length,visible+1);paint();if(visible===chars.length)clearInterval(timer);},32);}
- function end(run=true){if(closed)return;closed=true;clearInterval(timer);clearTimeout(introTimer);root.close();root.remove();dismiss=null;if(previous?.isConnected)previous.focus({preventScroll:true});if(run)onDone();}
+ function end(run=true){if(closed)return;closed=true;resize.disconnect();clearInterval(timer);clearTimeout(introTimer);root.close();root.remove();dismiss=null;if(previous?.isConnected)previous.focus({preventScroll:true});if(run)onDone();}
  function advance(){if(entering)return;if(visible<chars.length){clearInterval(timer);visible=chars.length;paint();}else if(index+1<story.lines.length){index++;draw();}else end();}
  root.addEventListener('click',e=>{if(e.target.closest('.story-skip'))end();else if(e.target.closest('.story-box'))advance();});
  root.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.repeat){if(e.target.closest('.story-skip'))return;e.preventDefault();advance();}});
  root.addEventListener('cancel',e=>{e.preventDefault();if(entering)return;if(visible<chars.length){clearInterval(timer);visible=chars.length;paint();}});
- document.body.append(root);root.showModal();dismiss=end;draw();q('.story-next').focus();
+ function layoutPortraits(){
+ const scene=q('.story-scene').getBoundingClientRect(),box=q('.story-box').getBoundingClientRect(),header=q('.story-header').getBoundingClientRect();
+ const portrait=scene.height>scene.width;
+ const top=Math.max(header.bottom+12,portrait?q('.story-goal').getBoundingClientRect().bottom+12:0);
+ const baseline=box.top+32;
+ const size=Math.max(0,Math.min(scene.width*(portrait?.46:.43),baseline-top));
+ root.style.setProperty('--portrait-size',size+'px');root.style.setProperty('--portrait-bottom',(scene.bottom-baseline)+'px');
+ }
+ const resize=new ResizeObserver(layoutPortraits);
+ document.body.append(root);root.showModal();dismiss=end;draw();layoutPortraits();
+ for(const el of [q('.story-scene'),q('.story-box'),q('.story-header'),q('.story-goal')])resize.observe(el);q('.story-next').focus();
  if(entering)introTimer=setTimeout(()=>{if(closed)return;entering=false;root.classList.remove('story-from-black');draw();},1250);
 }
