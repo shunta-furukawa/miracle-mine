@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {voyageStage,voyageGoal,voyageEvaluate,voyageSolution,voyageUnlocked,voyageRecord,addDistance,skySpawn,createSkyBoard,seededRandom,SKY_TIERS,SKY_FACTORS,treasures,validSeed,randomSeed} from '../src/sky-voyage.js';
+import {voyageStage,voyageGoal,voyageEvaluate,voyageSolution,voyageUnlocked,voyageRecord,addDistance,skySpawn,createSkyBoard,seededRandom,SKY_TIERS,SKY_FACTORS,SKY_REGIONS,voyageRegion,treasures,validSeed,randomSeed} from '../src/sky-voyage.js';
 import {freshSlot,normalize} from '../src/save.js';import {stageBrief} from '../src/stage-intro.js';
 const tierSpan=set=>SKY_TIERS[Math.min(set,SKY_TIERS.length-1)].count;
 test('goal tiers: 2×10, 3×20, 4×30, then 5-stone sets of 30 forever, distinct and ascending within a set',()=>{
@@ -32,4 +32,12 @@ test('distance and treasures persist; raised thresholds never take an earned tre
  assert.deepEqual(voyageRecord({total:300000,best:999999}).treasures,[0,1,2,3,4,5]);
  const n=normalize({version:1,slots:[{...freshSlot(),cleared:[],sky:{total:2600,best:1000,flights:1,treasures:[0,1]}},null,null],bests:{},settings:{}});assert.deepEqual(n.slots[0].sky.treasures,[0,1]);
 });
-test('sky intro explains the stone count and distance without an infinite count',()=>{const b=stageBrief(voyageStage(3,0),{mode:'sky'});assert.equal(b.target,voyageGoal(3,0).target);assert.equal(b.label,'SECRET CHAPTER 06');assert.match(b.goal,/2つの石/);assert.match(b.hint,/＋と×/);assert(!JSON.stringify(b).includes('Infinity'))});
+test('regions name each tier, count progress and number repeat laps of the far sky',()=>{
+ assert.deepEqual(SKY_REGIONS.map(r=>r.name),['雲の海','夕映えの回廊','星の高み','果ての空']);
+ const r0=voyageRegion(voyageStage(3,0));assert.equal(r0.label,'雲の海');assert.equal(r0.position,0);assert.equal(r0.count,10);assert.equal(r0.lap,1);
+ const r1=voyageRegion(voyageStage(3,13));assert.equal(r1.label,'夕映えの回廊');assert.equal(r1.position,3);assert.equal(r1.count,20);
+ assert.equal(voyageRegion(voyageStage(3,30)).label,'星の高み');assert.equal(voyageRegion(voyageStage(3,60)).label,'果ての空');
+ const lap2=voyageRegion(voyageStage(3,90));assert.equal(lap2.label,'果ての空 Ⅱ');assert.equal(lap2.lap,2);assert.equal(lap2.position,0);assert.equal(voyageRegion(voyageStage(3,149)).label,'果ての空 Ⅲ');
+ assert(!JSON.stringify(SKY_REGIONS).match(/[0-9０-９]つの石|枚/));
+});
+test('sky intro names the region and distance without an infinite count or a stone count',()=>{const b=stageBrief(voyageStage(3,0),{mode:'sky'});assert.equal(b.target,voyageGoal(3,0).target);assert.equal(b.label,'SECRET CHAPTER 06');assert.match(b.goal,/雲の海/);assert(!/つの石/.test(b.goal));assert.match(b.hint,/＋と×/);assert(!JSON.stringify(b).includes('Infinity'))});

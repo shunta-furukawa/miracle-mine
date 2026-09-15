@@ -13,6 +13,19 @@ export const SKY_PROTOCOL=2;
 /* Goal tiers: how many stones multiply to the target and how many goals each tier lasts. The last tier repeats forever. */
 export const SKY_TIERS=[{tiles:2,count:10},{tiles:3,count:20},{tiles:4,count:30},{tiles:5,count:30}];
 export const SKY_FACTORS=[2,3,4,5,6,7,8,9];
+/* Each tier is a region of the sky. Players only ever see these names, never the stone count. */
+export const SKY_REGIONS=[
+ {key:'clouds',name:'雲の海',tagline:'白い雲のうえを、ゆっくり滑空する。',lore:'旅のはじまり。朝の光が雲海をてらし、道しるべの羅針盤が空のむこうを指している。'},
+ {key:'afterglow',name:'夕映えの回廊',tagline:'空が茜色に染まり、気流が速くなる。',lore:'古い石のアーチが連なる回廊。ランタンに灯りがともり、風の筋が長く流れていく。'},
+ {key:'stars',name:'星の高み',tagline:'空気がうすく、星が近い。',lore:'結晶が青白く光り、真鍮の天球儀がまわる。星の声が聞こえそうな、しずかな高み。'},
+ {key:'farsky',name:'果ての空',tagline:'だれも見たことのない、空のむこう。',lore:'光のカーテンがゆらぎ、見知らぬ島の影が並ぶ。ここから先は、地図のない空。'}
+];
+const numerals=['','Ⅱ','Ⅲ','Ⅳ','Ⅴ','Ⅵ','Ⅶ','Ⅷ','Ⅸ','Ⅹ'];
+/* Region view of a goal or stage: name, lap (the last region repeats) and progress inside the region. */
+export function voyageRegion(goal){
+ const region=SKY_REGIONS[Math.min(goal.tier,SKY_REGIONS.length-1)],lap=Math.max(1,goal.set-SKY_TIERS.length+2),count=SKY_TIERS[Math.min(goal.set,SKY_TIERS.length-1)].count;
+ return {...region,index:Math.min(goal.tier,SKY_REGIONS.length-1),lap,label:lap>1?`${region.name} ${numerals[Math.min(lap-1,numerals.length-1)]}`:region.name,position:goal.position,count};
+}
 export const FACTOR_BIAS=.35,ZERO_RATE=.08;
 export const validSeed=n=>Number.isInteger(n)&&n>=0&&n<=0xFFFFFFFF;
 export const randomSeed=()=>globalThis.crypto?.getRandomValues?globalThis.crypto.getRandomValues(new Uint32Array(1))[0]:Math.floor(Math.random()*0x100000000);
@@ -33,7 +46,7 @@ export function voyageGoal(seed,done=0){
  while(index>=tierAt(set).count){index-=tierAt(set).count;set++;}
  const pick=goalSet(seed,set)[index];return {target:pick.target,factors:pick.factors,tiles:tierAt(set).tiles,tier:Math.min(set,SKY_TIERS.length-1),set,position:index};
 }
-export function voyageStage(seed,done=0){const goal=voyageGoal(seed,done);return {chapter:4,step:0,id:30,name:skyChapter.name,target:goal.target,factors:goal.factors,tiles:goal.tiles,tier:goal.tier,min:0,max:9,multiply:true,count:Infinity,life:80,recover:18};}
+export function voyageStage(seed,done=0){const goal=voyageGoal(seed,done);return {chapter:4,step:0,id:30,name:skyChapter.name,target:goal.target,factors:goal.factors,tiles:goal.tiles,tier:goal.tier,set:goal.set,position:goal.position,min:0,max:9,multiply:true,count:Infinity,life:80,recover:18};}
 /* New stones lean toward the current goal's factors; existing stones are never rewritten. */
 export function skySpawn(stage,random=Math.random){if(random()<FACTOR_BIAS&&stage?.factors?.length)return stage.factors[Math.floor(random()*stage.factors.length)];return random()<ZERO_RATE?0:1+Math.floor(random()*9);}
 export const createSkyBoard=(stage,random=Math.random)=>Array.from({length:25},()=>skySpawn(stage,random));

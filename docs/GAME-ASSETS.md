@@ -18,3 +18,8 @@ Original art generated with OpenAI ImageGen for Miracle Mine. Existing game art 
 - `src/assets/sky-treasures.webp`: six original brass-and-gem artifacts in a 3×2 atlas: winged gear, cloud crystal, ancient compass / feather key, star globe, sky pearl crown. Consistent warm fantasy illustration, separate cells, no text, flat magenta backdrop. Source: `exec-ef0d6cfa-1944-4e3c-a6ef-97605737a2ba.png`.
 
 Character and treasure backgrounds were removed by connected magenta-key extraction with one-pixel edge cleanup; cells were trimmed, centered and padded before WebP encoding. Shipped sizes: Toto 512×512, treasure atlas 768×512, sky panorama 1660 pixels wide. Alpha is real transparency. The airplane remains the player's existing customized assembly, rather than replacing their design with a generic new plane.
+
+
+## 第6章 領域カットイン背景（0.18）
+
+`src/assets/sky-regions/` の `clouds.webp`（雲の海）、`afterglow.webp`（夕映えの回廊）、`stars.webp`（星の高み）は、プロジェクトオーナーが既存の空の風景（`sky-world.webp`）を参考画像として画像生成ツールで作成した本プロジェクト用のオリジナルイラスト。1600×900のWebPに変換して同梱し、`sky-regions.js` の全画面カットイン背景として使う。人物・機体・文字は含めない。`farsky.webp`（果ての空）は未納品のため、当面は `stars.webp` にCSSの色相回転をかけた仮背景を使っている。届き次第、同じ手順で変換して差し替える。
