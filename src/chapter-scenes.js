@@ -1,6 +1,7 @@
 import {victoryEffects} from './celebration.js';
 import {assemblyShowcase,assemblyNames,partArt,collectionStrip} from './airplane.js';
 import {chapters} from './data.js';
+import {starText,formatTime} from './stars.js';
 
 const subtitles=[
  '止まった水車に、もう一度いのちを。',
@@ -12,7 +13,7 @@ const subtitles=[
 let active=null;
 
 /** A chapter boundary owns focus until an explicit action, never a timer. */
-export function showChapterScene(index,{clear=false,resume=false,silent=false,completed=[],previous=completed,paint=0,design={paint},onNext,onMap,onShare}={}){
+export function showChapterScene(index,{clear=false,resume=false,silent=false,completed=[],previous=completed,paint=0,design={paint},record=null,onNext,onMap,onShare}={}){
  active?.();
  const chapter=chapters[index],scene=index+1;
  const previousFocus=document.activeElement;
@@ -31,6 +32,7 @@ export function showChapterScene(index,{clear=false,resume=false,silent=false,co
    <div class="chapter-rule" aria-hidden="true">✦</div>
    ${clear?`<p class="chapter-complete">第${index+1}章 · 全6ステージ クリア！</p>
    ${assemblyShowcase({completed,previous,paint,design,index,animate:previous.length<completed.length})}<div class="chapter-reward">${partArt(index)}<div><small>飛行機の部品を手に入れた！</small><strong>${chapter.part}</strong><span>${chapter.material}</span></div></div>
+   ${record?`<p class="chapter-stars"><span class="stars" aria-label="${record.stars}つ星">${starText(record.stars)}</span> ${formatTime(record.time)} · 割った回数 ${record.breaks}${record.improved?' · 新記録！':''}</p>`:''}
    <p class="chapter-thanks">${chapter.guardian}「${chapter.end}」</p>
    <div class="chapter-parts">${collectionStrip(completed)}<small>${completed.length} / 5 部品</small></div>`:`<p class="chapter-subtitle">${subtitles[index]}</p><p class="chapter-destination">出会う守り手 · ${chapter.guardian}</p>`}
    <div class="chapter-controls"><button class="chapter-continue">${clear?(index===4?'おじいちゃんと初飛行へ ▸':`第${index+2}章へ ▸`):resume?'冒険の地図へ ▸':'物語をはじめる ▸'}</button>${clear?'<button class="chapter-map">冒険の地図へ</button>':''}${clear&&onShare?'<button class="chapter-map chapter-share">共有する</button>':''}</div>

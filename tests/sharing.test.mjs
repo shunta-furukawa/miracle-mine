@@ -9,13 +9,19 @@ const finished={cleared:Array.from({length:30},(_,i)=>i),paint:2,wing:1,propelle
 
 test('snapshots carry only public fields and survive a URL round trip',()=>{
  const s=createSnapshot('rank',finished,{rank:3,distance:12345});
- assert.deepEqual(Object.keys(s).sort(),['best','chapter','cleared','design','distance','kind','level','name','rank','stage','total','treasures']);
+ assert.deepEqual(Object.keys(s).sort(),['best','chapter','cleared','design','distance','kind','level','name','rank','stage','stars','tenths','total','treasures']);
  const code=encodeShare(s),json=Buffer.from(code.replace(/-/g,'+').replace(/_/g,'/'),'base64').toString('utf8');
  assert.match(code,/^[A-Za-z0-9_-]+$/);assert.ok(code.length<MAX_CODE);
  assert.ok(!json.includes(finished.ranking.key)&&!json.includes(finished.ranking.uid)&&!json.includes('cleared'));
  assert.deepEqual(decodeShare(code),s);
  assert.equal(shareUrl(s),'https://miracle-mine.vercel.app/api/share?s='+code);
  assert.equal(shareImageUrl(s),shareUrl(s)+'&image=1');
+});
+test('stage shares carry the star rating and time',()=>{
+ const s=createSnapshot('stage',{...finished,cleared:[0,1,2]},{chapter:0,stage:2,stars:3,tenths:412});assert.equal(s.stars,3);assert.equal(s.tenths,412);assert.deepEqual(decodeShare(encodeShare(s)),s);
+ const copy=shareCopy(s);assert.match(copy.text,/★★★ 41\.2秒/);assert.equal(copy.chips[0],'★★★ 41.2秒');
+ assert.equal(createSnapshot('stage',finished,{chapter:0,stage:2,stars:0}).stars,null);assert.equal(createSnapshot('stage',finished,{chapter:0,stage:2,stars:7}).stars,null);
+ assert.equal(shareCopy(createSnapshot('stage',finished,{chapter:0,stage:2})).chips.length,2);
 });
 test('every kind encodes and decodes',()=>{
  for(const kind of kinds){const s=createSnapshot(kind,finished,{chapter:1,stage:4,distance:8765,best:12345,total:36000,rank:12,treasures:[0,2]});assert.ok(s,kind);assert.deepEqual(decodeShare(encodeShare(s)),s,kind);const copy=shareCopy(s);assert.ok(copy.title&&copy.description&&copy.text&&copy.headline,kind);assert.ok(copy.text.length<=140,kind+' text length '+copy.text.length);}

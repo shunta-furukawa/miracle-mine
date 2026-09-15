@@ -22,7 +22,7 @@ export function createSnapshot(kind,slot=null,extra={}){
 export function normalizeSnapshot(value){
  if(!value||typeof value!=='object'||!kinds.includes(value.kind))return null;
  const kind=value.kind,design=flightDesign(value.design||{}),level=clamp(value.level,5)??0;
- const snapshot={kind,name:flightName(value.name),design,level,cleared:clamp(value.cleared,30)??0,chapter:clamp(value.chapter,4),stage:clamp(value.stage,5),distance:count(value.distance),best:count(value.best),total:count(value.total),rank:count(value.rank),treasures:[...new Set(Array.isArray(value.treasures)?value.treasures.filter(i=>Number.isInteger(i)&&i>=0&&i<treasures.length):[])].sort((a,b)=>a-b)};
+ const snapshot={kind,name:flightName(value.name),design,level,cleared:clamp(value.cleared,30)??0,chapter:clamp(value.chapter,4),stage:clamp(value.stage,5),stars:clamp(value.stars,3)||null,tenths:count(value.tenths,360000),distance:count(value.distance),best:count(value.best),total:count(value.total),rank:count(value.rank),treasures:[...new Set(Array.isArray(value.treasures)?value.treasures.filter(i=>Number.isInteger(i)&&i>=0&&i<treasures.length):[])].sort((a,b)=>a-b)};
  if(['stage','chapter'].includes(kind)&&snapshot.chapter===null)return null;
  if(kind==='stage'&&snapshot.stage===null)return null;
  if(['voyage','rank'].includes(kind)&&snapshot.distance===null)return null;
@@ -37,7 +37,7 @@ export function encodeShare(value){
  if(s.name)compact.n=s.name;
  if(Object.values(s.design).some(Boolean))compact.d=[s.design.paint,s.design.wing,s.design.propeller,s.design.decoration];
  if(s.level)compact.a=s.level;if(s.cleared)compact.p=s.cleared;
- for(const [key,short] of [['chapter','c'],['stage','s'],['distance','m'],['best','b'],['total','t'],['rank','r']])if(s[key]!==null)compact[short]=s[key];
+ for(const [key,short] of [['chapter','c'],['stage','s'],['distance','m'],['best','b'],['total','t'],['rank','r'],['stars','q'],['tenths','e']])if(s[key]!==null)compact[short]=s[key];
  if(s.treasures.length)compact.j=s.treasures;
  return bytesToBase64(new TextEncoder().encode(JSON.stringify(compact)));
 }
@@ -46,7 +46,7 @@ export function decodeShare(code){
  let raw;try{raw=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(base64ToBytes(code)));}catch{return null}
  if(!raw||typeof raw!=='object'||raw.v!==1||!Array.isArray(raw.d)&&raw.d!==undefined)return null;
  const d=raw.d||[];
- return normalizeSnapshot({kind:raw.k,name:raw.n,design:{paint:d[0],wing:d[1],propeller:d[2],decoration:d[3]},level:raw.a??0,cleared:raw.p??0,chapter:raw.c,stage:raw.s,distance:raw.m,best:raw.b,total:raw.t,rank:raw.r,treasures:raw.j});
+ return normalizeSnapshot({kind:raw.k,name:raw.n,design:{paint:d[0],wing:d[1],propeller:d[2],decoration:d[3]},level:raw.a??0,cleared:raw.p??0,chapter:raw.c,stage:raw.s,stars:raw.q,tenths:raw.e,distance:raw.m,best:raw.b,total:raw.t,rank:raw.r,treasures:raw.j});
 }
 export const shareUrl=(snapshot,origin=SITE)=>`${origin}${SHARE_PATH}?s=${encodeShare(snapshot)}`;
 export const shareImageUrl=(snapshot,origin=SITE)=>`${shareUrl(snapshot,origin)}&image=1`;
@@ -63,8 +63,8 @@ export function shareCopy(value){
  switch(s.kind){
   case 'slot':case 'workshop':
    Object.assign(copy,{title:`${plane}｜${site}`,headline:`${plane}は、${assemblyNames[s.level]}`,caption:`${s.cleared} / 30 ステージクリア・${designLabel(s.design)}`,chips:[progress,`${s.cleared} / 30 ステージ`],description:`${progress}。${intro}`,text:`わたしの蒸気飛行機「${plane}」は、${assemblyNames[s.level]}${assemblyNames[s.level].endsWith('！')?'':'！'} 部品 ${s.level} / 5 ${tag}`});break;
-  case 'stage':{const st=stages[s.chapter*6+s.stage],label=`${s.chapter+1}-${s.stage+1}「${st.name}」`;
-   Object.assign(copy,{title:`第${s.chapter+1}章 ${label} クリア！｜${site}`,headline:`${label}をクリア！`,caption:`第${s.chapter+1}章「${c.name}」・目標の数 ${st.target}`,chips:[`第${s.chapter+1}章 ${c.name}`,`${s.cleared} / 30 ステージ`],description:`第${s.chapter+1}章「${c.name}」のステージ${label}をクリア。${intro}`,text:`Miracle Mine 第${s.chapter+1}章「${c.name}」${label}をクリア！ ${s.cleared} / 30 ステージ ${tag}`,scene:'chapter'});break;}
+  case 'stage':{const st=stages[s.chapter*6+s.stage],label=`${s.chapter+1}-${s.stage+1}「${st.name}」`,starLine=s.stars?`${'★'.repeat(s.stars)}${'☆'.repeat(3-s.stars)}${s.tenths!==null?` ${(s.tenths/10).toFixed(1)}秒`:''}`:'';
+   Object.assign(copy,{title:`第${s.chapter+1}章 ${label} クリア！｜${site}`,headline:`${label}をクリア！`,caption:`第${s.chapter+1}章「${c.name}」・目標の数 ${st.target}${starLine?`・${starLine}`:''}`,chips:[...(starLine?[starLine]:[]),`第${s.chapter+1}章 ${c.name}`,`${s.cleared} / 30 ステージ`],description:`第${s.chapter+1}章「${c.name}」のステージ${label}をクリア${starLine?`（${starLine}）`:''}。${intro}`,text:`Miracle Mine 第${s.chapter+1}章「${c.name}」${label}をクリア！${starLine?` ${starLine}`:''} ${s.cleared} / 30 ステージ ${tag}`,scene:'chapter'});break;}
   case 'chapter':
    Object.assign(copy,{title:`第${s.chapter+1}章「${c.name}」クリア！｜${site}`,headline:`第${s.chapter+1}章「${c.name}」クリア！`,caption:`${c.part}を手に入れた・${assemblyNames[s.level]}`,chips:[c.part,progress],description:`第${s.chapter+1}章「${c.name}」をクリアして、${c.part}を手に入れた。${intro}`,text:`Miracle Mine 第${s.chapter+1}章「${c.name}」クリア！ ${c.part}を手に入れて、${assemblyNames[s.level]} ${tag}`,scene:'chapter'});break;
   case 'flight':

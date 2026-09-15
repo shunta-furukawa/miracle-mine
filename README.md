@@ -47,6 +47,10 @@ Run `npm test` for the puzzle rules, initial solvability and save validation.
 
 Every milestone screen (title, settings, save list, stage/chapter clear, workshop, sky voyage departure and return, treasures, own ranking row) opens a share dialog with a 1200×630 card, an X post link, image download, link copy and the OS share sheet. `/api/share?s=…` serves the landing page with OGP metadata and `&image=1` renders the PNG from the game's own sprites with `@vercel/og` and `sharp`. The URL carries only a public snapshot; see [docs/SHARING.md](docs/SHARING.md).
 
+## Three-star ratings (0.19)
+
+Every story stage records play time and how many traces broke stones instead of hitting the goal or merging. Three stars need the chapter's pace and no breaks, two stars allow a slower time and up to two breaks; the best record per stage is kept in the save and shown on the map, save list, clear screen and stage intro. Thresholds live in `src/stars.js`; see [docs/STARS.md](docs/STARS.md).
+
 ## Home-screen app (PWA)
 
 Use Safari → Share → Add to Home Screen on iPhone/iPad, or the browser install action on Android/desktop. The manifest requests standalone display and landscape orientation; platform support determines orientation behavior. Icons include Apple 180px, standard 192/512px, and a separately padded maskable 512px asset.
