@@ -56,20 +56,23 @@ export const planeImage=(level,design,background='#fff8e9')=>memo(`plane:${level
  return sharp({create:{width:PLANE_W,height:PLANE_H,channels:3,background}}).composite(layers).png().toBuffer();
 });
 const scenery=name=>memo('scene:'+name,async()=>dataUri(await sharp(await asset(name)).resize(WIDTH,HEIGHT,{fit:'cover'}).jpeg({quality:72}).toBuffer(),'image/jpeg'));
-const logo=()=>memo('logo',async()=>dataUri(await sharp(await asset('title-logo.webp')).resize({width:420}).png().toBuffer()));
+/* Character-free scenery cells (workshop, forest, harbor, cavern, forge, sky) so the card panel never covers the cast. */
+const worldScene=cell=>memo('world:'+cell,async()=>dataUri(await sharp(await asset('dialogue-worlds.webp')).extract({left:cell%3*724,top:Math.floor(cell/3)*362,width:724,height:362}).resize(WIDTH,HEIGHT,{fit:'cover'}).jpeg({quality:78}).toBuffer(),'image/jpeg'));
+const logo=()=>memo('logo',async()=>dataUri(await sharp(await asset('title-logo.webp')).resize({width:540}).png().toBuffer()));
 const treasureImage=i=>memo('treasure:'+i,async()=>dataUri(await sharp(await asset('sky-treasures.webp')).extract({left:i%3*256,top:Math.floor(i/3)*256,width:256,height:256}).resize(150,150).png().toBuffer()));
 
 const h=(type,style,children)=>({type,props:{style,children}});
 const text=(value,style)=>h('div',{display:'flex',...style},value);
 export async function shareCardElement(value){
  const s=normalizeSnapshot(value)||normalizeSnapshot({kind:'title'}),copy=shareCopy(s);
- const scene=await scenery(copy.scene==='sky'?'sky-world.webp':'workshop.webp');
+ // The title card keeps Luka, Toto and Mos visible on the right; every other card uses an empty scenery cell.
+ const scene=s.kind==='title'?await scenery('workshop.webp'):copy.scene==='sky'?await scenery('sky-world.webp'):await worldScene(copy.scene==='chapter'?s.chapter+1:0);
  const ink='#fff8e6',gold='#f6d27a',panel='#fff8e9';
  const headlineSize=copy.headline.length>22?36:copy.headline.length>13?44:Math.min(62,Math.floor(620/copy.headline.length));
  const chips=copy.chips.map(label=>text(label,{padding:'8px 18px',borderRadius:999,background:'rgba(255,248,230,0.16)',border:'2px solid rgba(246,210,122,0.7)',color:ink,fontSize:24,marginRight:12}));
  let visual;
  if(s.kind==='title'){
-  visual={type:'img',props:{src:await logo(),width:420,height:280,style:{filter:'drop-shadow(0 12px 24px rgba(0,0,0,0.45))'}}};
+  visual=h('div',{display:'flex',width:10},undefined);
  }else if(s.kind==='treasure'){
   const cells=treasures.map((t,i)=>h('div',{display:'flex',flexDirection:'column',alignItems:'center',width:130,margin:'6px 4px',opacity:s.treasures.includes(i)?1:0.28},[
    {type:'img',props:{src:'',width:96,height:96,style:{filter:s.treasures.includes(i)?'none':'grayscale(1)'}}},
@@ -84,11 +87,11 @@ export async function shareCardElement(value){
  }
  return h('div',{display:'flex',width:WIDTH,height:HEIGHT,position:'relative',fontFamily:'Noto Sans JP',color:ink},[
   {type:'img',props:{src:scene,width:WIDTH,height:HEIGHT,style:{position:'absolute',top:0,left:0,objectFit:'cover'}}},
-  h('div',{position:'absolute',top:0,left:0,width:WIDTH,height:HEIGHT,background:'linear-gradient(100deg, rgba(10,38,44,0.93) 0%, rgba(10,38,44,0.80) 52%, rgba(10,38,44,0.35) 100%)'},undefined),
+  h('div',{position:'absolute',top:0,left:0,width:WIDTH,height:HEIGHT,background:s.kind==='title'?'linear-gradient(90deg, rgba(10,38,44,0.94) 0%, rgba(10,38,44,0.88) 42%, rgba(10,38,44,0.30) 58%, rgba(10,38,44,0.05) 75%, rgba(10,38,44,0) 100%)':'linear-gradient(100deg, rgba(10,38,44,0.93) 0%, rgba(10,38,44,0.80) 52%, rgba(10,38,44,0.35) 100%)'},undefined),
   h('div',{display:'flex',position:'absolute',top:0,left:0,width:WIDTH,height:HEIGHT,padding:'54px 60px',alignItems:'center',justifyContent:'space-between'},[
-   h('div',{display:'flex',flexDirection:'column',width:s.kind==='title'?620:640,paddingRight:20},[
-    text(copy.eyebrow,{fontSize:24,letterSpacing:6,color:gold}),
-    text(copy.headline,{fontSize:headlineSize,lineHeight:1.3,marginTop:18,textShadow:'0 4px 14px rgba(0,0,0,0.45)',...(copy.headline.length>13?{lineClamp:2}:{whiteSpace:'nowrap'})}),
+   h('div',{display:'flex',flexDirection:'column',width:s.kind==='title'?600:640,paddingRight:20},[
+    s.kind==='title'?{type:'img',props:{src:await logo(),width:540,height:360,style:{marginLeft:-30,marginTop:-40,marginBottom:-30,filter:'drop-shadow(0 10px 20px rgba(0,0,0,0.5))'}}}:text(copy.eyebrow,{fontSize:24,letterSpacing:6,color:gold}),
+    text(copy.headline,{fontSize:s.kind==='title'?40:headlineSize,lineHeight:1.3,marginTop:18,textShadow:'0 4px 14px rgba(0,0,0,0.45)',...(copy.headline.length>13?{lineClamp:2}:{whiteSpace:'nowrap'})}),
     text(copy.caption,{fontSize:26,lineHeight:1.55,marginTop:22,color:'#ffeec9',maxWidth:600}),
     chips.length?h('div',{display:'flex',flexWrap:'wrap',marginTop:26},chips):h('div',{display:'flex'},undefined),
     text('miracle-mine.vercel.app ・ 無料で遊べる数字パズル',{fontSize:22,marginTop:34,color:gold})

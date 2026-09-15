@@ -50,7 +50,7 @@ UID・認証キー・セーブ全体は含めない。カードは自己申告�
 - `src/share-landing.js` / `src/share-landing.css` — 紹介ページの静的ファイル（`dist` から配信）。
 - `src/assets/share-default.png` — ルートURL用のOGP画像。`npm run share-default` で再生成。
 - `api/share.js` — Vercel Function。HTML／PNG／イベント。
-- `server/share-card.js` — `@vercel/og`（satori）+ `sharp` で描画。`dist/assets` の既存WebPからスプライトを切り出し、機体の色はCSSと同じ `hue-rotate` 行列（`hueMatrix`）で回転、プロペラ・エンブレムは乗算合成。
+- `server/share-card.js` — `@vercel/og`（satori）+ `sharp` で描画。タイトルカードはロゴを左の文字欄に置き、右側のルカ・トトじい・モスを隠さない。ほかのカードは `dialogue-worlds.webp` のキャラクターのいない章別背景（工房・森・港・洞窟・鍛冶場）または `sky-world.webp` を使い、機体パネルが登場人物に重ならないようにする。`dist/assets` の既存WebPからスプライトを切り出し、機体の色はCSSと同じ `hue-rotate` 行列（`hueMatrix`）で回転、プロペラ・エンブレムは乗算合成。
 - `server/assets/NotoSansJP-Bold.woff` — Noto Sans JP weight 700 の日本語サブセット（SIL OFL 1.1、`server/assets/OFL.txt`）。外部フォント取得を行わないため、タイムアウトの心配がない。`✦` はこのフォントに含まれないのでカードでは使わない。
 
 依存: `@vercel/og` 0.8.5（1.x はNode環境で `Dynamic require of fs is not supported` になるため固定）、`sharp` 0.35.4。
