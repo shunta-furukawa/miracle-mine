@@ -20,7 +20,7 @@ test('saves store per-stage records safely and old saves get an empty star map',
  assert.deepEqual(normalizeStars(null),{});assert.deepEqual(normalizeStars('x'),{});
 });
 test('stage intro shows the three-star condition and the personal record',()=>{
- const stage=stages[7];const fresh=stageBrief(stage,{mode:'story'});assert.match(fresh.stars,/3つ星の条件: \d+秒以内・割らない/);
- const withRecord=stageBrief(stage,{mode:'story',record:{stars:2,time:41.2,breaks:1}});assert.match(withRecord.stars,/きみの記録 ★★☆ 41\.2秒・割った回数 1/);
- assert.equal(stageBrief(stage,{mode:'score'}).stars,'');
+ const stage=stages[7];const fresh=stageBrief(stage,{mode:'story'});assert.equal(fresh.stars.record,null);assert.deepEqual(fresh.stars.goal,{time:`${starGoal(stage).time}秒以内`,breaks:'割らない'});
+ const withRecord=stageBrief(stage,{mode:'story',record:{stars:2,time:41.2,breaks:1}});assert.deepEqual(withRecord.stars.record,{marks:'★★☆',stars:2,time:'41.2秒',breaks:'割った回数 1'});
+ assert.equal(stageBrief(stage,{mode:'score'}).stars,null);
 });
