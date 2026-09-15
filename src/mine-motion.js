@@ -1,3 +1,4 @@
+import {modeColor} from './operation-feedback.js';
 // Reconstruct each tile's origin using the same bottom-up order as resolve().
 export function fallOrigins(path,kind){
  const removed=new Set(path);if(kind==='merge')removed.delete(path.at(-1));
@@ -8,12 +9,12 @@ export function fallOrigins(path,kind){
  }
  return origins;
 }
-export async function gatherStones({board,path,result,tileStyle,play,current,apply}){
+export async function gatherStones({board,path,op='+',result,tileStyle,play,current,apply}){
  const columns=new Set(path.map(i=>i%5));
  const stones=[...board.querySelectorAll('.stone')],bounds=board.getBoundingClientRect();
  const boxes=stones.map(e=>{const r=e.getBoundingClientRect();return {x:r.left-bounds.left-board.clientLeft,y:r.top-bounds.top-board.clientTop,w:r.width,h:r.height}});
  const owned=stones.filter((_,i)=>columns.has(i%5));
- const layer=document.createElement('div');layer.className='mine-motion';layer.setAttribute('aria-hidden','true');board.append(layer);
+ const layer=document.createElement('div');layer.className='mine-motion';layer.style.setProperty('--mode-color',modeColor(op));layer.setAttribute('aria-hidden','true');board.append(layer);
  const animations=new Set();const quiet=()=>document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches;
  const visible=()=>{if(document.hidden)for(const a of animations)try{a.finish()}catch{}};
  document.addEventListener('visibilitychange',visible);
