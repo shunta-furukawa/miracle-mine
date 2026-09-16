@@ -10,7 +10,7 @@ const remote=execFileSync('git',['ls-remote','https://github.com/shunta-furukawa
 if(!remote.includes(sha))throw new Error(`${sha} is not the tip of any branch on GitHub; push first`);
 const pkg=JSON.parse(await read('package.json'));
 const files=[
- {file:'bootstrap.mjs',data:(await read('scripts/vercel-bootstrap.mjs')).toString().replace('__COMMIT__',sha)},
+ {file:'bootstrap.mjs',data:(await read('scripts/vercel-bootstrap.mjs')).toString().replaceAll('__COMMIT__',sha)},
  {file:'package.json',data:JSON.stringify({name:pkg.name,version:pkg.version,private:true,type:'module',engines:pkg.engines,scripts:{build:'node bootstrap.mjs'},dependencies:pkg.dependencies},null,2)+'\n'},
  {file:'vercel.json',data:(await read('vercel.json')).toString()},
  {file:'api/ranking.js',data:(await read('api/ranking.js')).toString()},

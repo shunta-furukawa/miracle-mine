@@ -20,3 +20,8 @@ test('vercel serves /about and the service worker caches it for offline use',asy
  assert.deepEqual(vercel.rewrites,[{source:'/about',destination:'/about.html'}]);
  assert.ok((await read('src/sw.js')).includes("'/about': '/about.html'"));
 });
+test('the deploy bootstrap template exposes exactly one commit placeholder in code',async()=>{
+ const src=await read('scripts/vercel-bootstrap.mjs');
+ assert.ok(src.includes("const COMMIT='__COMMIT__'"));
+ assert.ok((await read('scripts/deploy-payload.mjs')).includes("replaceAll('__COMMIT__'"),'every placeholder is filled');
+});
