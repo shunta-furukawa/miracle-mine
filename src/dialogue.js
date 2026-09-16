@@ -5,10 +5,9 @@ export function showDialogue(story,onDone,{fadeIn=false}={}){
  const previous=document.activeElement;
  const root=document.createElement('dialog');root.className='story-dialog';
  root.setAttribute('aria-label',story.title);
- root.innerHTML=`<section class="story-scene"><div class="story-background-window"><div class="story-backdrop"></div></div><div class="story-wash"></div><header class="story-header"><h2></h2><button class="story-skip">スキップ ≫</button></header><div class="story-actor story-left" aria-hidden="true"></div><div class="story-actor story-right" aria-hidden="true"></div><div class="story-goal"></div><div class="story-box"><div class="story-speaker"></div><p class="story-words" aria-hidden="true"></p><p class="sr-only story-accessible" aria-live="polite" aria-atomic="true"></p><div class="story-footer"><span class="story-count"></span><button class="story-next">全文を表示 ▸</button></div></div></section>`;
+ root.innerHTML=`<section class="story-scene"><div class="story-background-window"><div class="story-backdrop"></div></div><div class="story-wash"></div><header class="story-header"><h2></h2><button class="story-skip">スキップ ≫</button></header><div class="story-actor story-left" aria-hidden="true"></div><div class="story-actor story-right" aria-hidden="true"></div><div class="story-box"><div class="story-speaker"></div><p class="story-words" aria-hidden="true"></p><p class="sr-only story-accessible" aria-live="polite" aria-atomic="true"></p><div class="story-footer"><span class="story-count"></span><button class="story-next">全文を表示 ▸</button></div></div></section>`;
  const q=s=>root.querySelector(s);q('h2').textContent=story.title;
  const bg=q('.story-backdrop');bg.style.backgroundPosition=`${story.scene%3*50}% ${Math.floor(story.scene/3)*100}%`;
- q('.story-goal').textContent=story.goal||'数字がつながる、せかいがひろがる';
  let index=0,chars=[],visible=0,timer=null,introTimer=null,closed=false;
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  let entering=fadeIn&&!reduced;if(entering)root.classList.add('story-from-black');
@@ -26,13 +25,13 @@ export function showDialogue(story,onDone,{fadeIn=false}={}){
  function layoutPortraits(){
  const scene=q('.story-scene').getBoundingClientRect(),box=q('.story-box').getBoundingClientRect(),header=q('.story-header').getBoundingClientRect();
  const portrait=scene.height>scene.width;
- const top=Math.max(header.bottom+12,portrait?q('.story-goal').getBoundingClientRect().bottom+12:0);
+ const top=header.bottom+12;
  const baseline=box.top+32;
  const size=Math.max(0,Math.min(scene.width*(portrait?.46:.43),baseline-top));
  root.style.setProperty('--portrait-size',size+'px');root.style.setProperty('--portrait-bottom',(scene.bottom-baseline)+'px');
  }
  const resize=new ResizeObserver(layoutPortraits);
  document.body.append(root);root.showModal();dismiss=end;draw();layoutPortraits();
- for(const el of [q('.story-scene'),q('.story-box'),q('.story-header'),q('.story-goal')])resize.observe(el);q('.story-next').focus();
+ for(const el of [q('.story-scene'),q('.story-box'),q('.story-header')])resize.observe(el);q('.story-next').focus();
  if(entering)introTimer=setTimeout(()=>{if(closed)return;entering=false;root.classList.remove('story-from-black');draw();},1250);
 }
