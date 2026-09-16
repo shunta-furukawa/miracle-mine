@@ -17,6 +17,9 @@ test('snapshots carry only public fields and survive a URL round trip',()=>{
  assert.equal(shareUrl(s),'https://miracle-mine.vercel.app/api/share?s='+code);
  assert.equal(shareImageUrl(s),shareUrl(s)+'&image=1');
 });
+test('a blocked or contact-like name never reaches a card, page or post',()=>{
+ for(const name of ['ちんちん号','090-1234-5678']){const s=createSnapshot('workshop',{...finished,flightName:name});assert.equal(s.name,'');const decoded=decodeShare(encodeShare({...s,name}));assert.equal(decoded.name,'');const copy=shareCopy(decoded);for(const v of [copy.title,copy.headline,copy.text,copy.description])assert.ok(!v.includes(name),v);assert.ok(!landingPage(decoded,'x').includes(name));}
+});
 test('stage shares carry the star rating and time',()=>{
  const s=createSnapshot('stage',{...finished,cleared:[0,1,2]},{chapter:0,stage:2,stars:3,tenths:412});assert.equal(s.stars,3);assert.equal(s.tenths,412);assert.deepEqual(decodeShare(encodeShare(s)),s);
  const copy=shareCopy(s);assert.match(copy.text,/★★★ 41\.2秒/);assert.equal(copy.chips[0],'★★★ 41.2秒');

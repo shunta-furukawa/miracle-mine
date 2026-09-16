@@ -2,6 +2,7 @@ import {chapters,stages} from './data.js';
 import {assemblyNames,collectedParts,assemblyLevel} from './airplane.js';
 import {treasures} from './sky-voyage.js';
 import {flightName,flightDesign} from './flight-profile.js';
+import {publicName} from './name-filter.js';
 
 /* Public snapshot for sharing. Everything here is shown on the card and inside the URL,
    so it never carries the ranking UID, the authentication key or the full save. */
@@ -22,7 +23,7 @@ export function createSnapshot(kind,slot=null,extra={}){
 export function normalizeSnapshot(value){
  if(!value||typeof value!=='object'||!kinds.includes(value.kind))return null;
  const kind=value.kind,design=flightDesign(value.design||{}),level=clamp(value.level,5)??0;
- const snapshot={kind,name:flightName(value.name),design,level,cleared:clamp(value.cleared,30)??0,chapter:clamp(value.chapter,4),stage:clamp(value.stage,5),stars:clamp(value.stars,3)||null,tenths:count(value.tenths,360000),distance:count(value.distance),best:count(value.best),total:count(value.total),rank:count(value.rank),treasures:[...new Set(Array.isArray(value.treasures)?value.treasures.filter(i=>Number.isInteger(i)&&i>=0&&i<treasures.length):[])].sort((a,b)=>a-b)};
+ const snapshot={kind,name:publicName(flightName(value.name)),design,level,cleared:clamp(value.cleared,30)??0,chapter:clamp(value.chapter,4),stage:clamp(value.stage,5),stars:clamp(value.stars,3)||null,tenths:count(value.tenths,360000),distance:count(value.distance),best:count(value.best),total:count(value.total),rank:count(value.rank),treasures:[...new Set(Array.isArray(value.treasures)?value.treasures.filter(i=>Number.isInteger(i)&&i>=0&&i<treasures.length):[])].sort((a,b)=>a-b)};
  if(['stage','chapter'].includes(kind)&&snapshot.chapter===null)return null;
  if(kind==='stage'&&snapshot.stage===null)return null;
  if(['voyage','rank'].includes(kind)&&snapshot.distance===null)return null;

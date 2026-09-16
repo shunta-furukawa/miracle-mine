@@ -20,6 +20,16 @@ npm run preview
 
 Open http://localhost:3000. The build copies `src/` to `dist/`.
 
+## About page, version and contact
+
+`/about` (served from `src/about.html` through a `vercel.json` rewrite and precached for offline use) carries how to play, target age, privacy notes, credits, terms and the contact channel (X: [@MiracleMine0123](https://x.com/MiracleMine0123)). The settings dialog links to both. The title screen and settings show the version, which `scripts/build.mjs` injects from `package.json` into `app.js` and `about.html` (`__VERSION__`); bump `package.json` and `package-lock.json` together. While the major version is 0 the label reads `PROTOTYPE`.
+
+Vercel Web Analytics is loaded from `/_vercel/insights/script.js` on both pages (cookieless page views); Web Analytics is enabled for the project; if it is ever re-enabled, redeploy afterwards, because the script route is wired in at deploy time (until then it returns 404 harmlessly). Headless and automated browsers are excluded by the script itself.
+
+## Continuous integration and deployment
+
+`.github/workflows/test.yml` runs `npm ci`, `npm test` and `npm run build` on every pull request and push to `main`. Production is deployed manually from a specific `main` commit; see [docs/DEPLOY.md](docs/DEPLOY.md).
+
 ## Vercel
 
 Import this GitHub repository as a Vercel project.
@@ -31,8 +41,8 @@ Production branch: `main`. Git integration must be enabled in Vercel for automat
 
 - Airplane paint changes the preview; wing/propeller/emblem choices are saved as design records, not separate rendered aircraft yet.
 - Five chapters have distinct missions, targets, and atmospheric tints; the base landscape illustration is shared.
-- Balance values are initial settings and need playtesting with the intended player.
-- Color, digits, and mineral sigils are redundant cues; formal color-vision simulation and physical iPhone testing remain.
+- Balance values have been tuned through playtesting with the intended players; further adjustment follows release feedback.
+- Color, digits, and mineral sigils are redundant cues; iPhone testing is done, formal color-vision simulation remains.
 - In-stage progress is not persisted; cleared stages and customization are saved.
 
 ## Tests
@@ -117,3 +127,5 @@ All recordings are bundled and available offline after the app cache is ready.
 ## 空の旅ランキング
 
 v0.16から、完成した飛行機に名前を付けて、機体デザイン付きの任意参加ランキングに挑戦できます。v0.18で第6章のお題は旅ごとにサーバー発行のシードから生成されるようになり（2個→3個→4個→5個の石のかけ算、5個は30問ごとに再抽選）、ランキングはシーズン制になりました。過去シーズンの記録は閲覧できます。VercelへNeon Freeを接続する手順は [ランキング設定](docs/RANKING-SETUP.md) を参照してください。未接続でも通常のゲームは遊べます。
+
+機体名はランキングと共有カードで公開されるため、`src/name-filter.js` で保存前・出発時・表示時・カード描画時に検査します（不適切語と連絡先を拒否）。リストの追加はこのファイルの配列に足すだけで、`npm test` の `name-filter` テストで誤検知を確認してください。

@@ -21,9 +21,10 @@ self.addEventListener('message', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (event.request.method !== 'GET' || url.origin !== self.location.origin) return;
-  if (event.request.mode === 'navigate' && (url.pathname === '/' || url.pathname === '/index.html')) {
+  const pages = {'/': '/index.html', '/index.html': '/index.html', '/about': '/about.html', '/about.html': '/about.html'};
+  if (event.request.mode === 'navigate' && pages[url.pathname]) {
     event.respondWith(caches.open(CACHE).then(async cache =>
-      (await cache.match('/index.html')) || fetch(event.request)
+      (await cache.match(pages[url.pathname])) || fetch(event.request)
     ));
   } else if (ASSETS.includes(url.pathname)) {
     event.respondWith(caches.open(CACHE).then(async cache =>
