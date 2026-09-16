@@ -2,6 +2,7 @@ import {modeName,modeColor,isModeDoubleTap,operationFeedback} from './operation-
 import {showOpening} from './opening.js';
 import {RankingClient,rankStatus} from './ranking.js';
 import {flightName} from './flight-profile.js';
+import {nameIssue,nameIssueMessage} from './name-filter.js';
 import {skyChapter,treasures,voyageUnlocked,voyageStage,voyageEvaluate,voyageSolution,skySpawn,createSkyBoard,randomSeed,voyageRecord,addDistance,treasureCollection,voyageRegion,SKY_REGIONS} from './sky-voyage.js';
 import {showRegionCutin} from './sky-regions.js';
 import {gatherStones} from './mine-motion.js';
@@ -177,11 +178,11 @@ function returnSky(reason='return'){const g=game;if(!g||g.mode!=='sky'||g.over||
 
 function planeNamePanel(s){return `<div class="plane-name-panel"><small>きみの飛行機の名前</small><strong>${esc(s.flightName||'まだ名前がありません')}</strong>${button(s.flightName?'名前を変える':'飛行機に名前をつける','plane-name','subtle')}</div>`;}
 let afterName=null;
-function namePlane(done=null){afterName=done;modal('飛行機に名前をつけよう',`<p>この名前で、空の旅ランキングに載るよ。</p><label class="plane-name-label" for="plane-name">飛行機の名前（20文字まで）</label><input id="plane-name" maxlength="40" autocomplete="off" value="${esc(data.slots[slot].flightName)}" placeholder="例：そらいろ号"><p class="muted">本名や連絡先を含めず、好きな名前をつけてね。</p>`,button('この名前にする','save-plane-name','primary')+button('やめる','close','subtle'));$('#plane-name').focus();}
-function savePlaneName(){const name=flightName($('#plane-name')?.value);if(!name){toast('飛行機の名前を入れてね');return;}data.slots[slot].flightName=name;data.slots[slot].updated=Date.now();if(!save(data)){toast('名前を保存できませんでした');return;}const done=afterName;afterName=null;closeModal();if(done){done();return;}if(screen==='workshop')workshop();else skyDeck();}
+function namePlane(done=null){afterName=done;modal('飛行機に名前をつけよう',`<p>この名前で、空の旅ランキングに載るよ。</p><label class="plane-name-label" for="plane-name">飛行機の名前（20文字まで）</label><input id="plane-name" maxlength="40" autocomplete="off" value="${esc(data.slots[slot].flightName)}" placeholder="例：そらいろ号"><p class="muted">ランキングと共有カードでみんなに見える名前です。本名・電話番号・住所・SNSの名前は入れないでね。らんぼうな言葉の名前は使えません。</p>`,button('この名前にする','save-plane-name','primary')+button('やめる','close','subtle'));$('#plane-name').focus();}
+function savePlaneName(){const name=flightName($('#plane-name')?.value);if(!name){toast('飛行機の名前を入れてね');return;}const issue=nameIssue(name);if(issue){toast(nameIssueMessage(issue));$('#plane-name')?.focus();return;}data.slots[slot].flightName=name;data.slots[slot].updated=Date.now();if(!save(data)){toast('名前を保存できませんでした');return;}const done=afterName;afterName=null;closeModal();if(done){done();return;}if(screen==='workshop')workshop();else skyDeck();}
 function rankMessage(run){return `<p class="ranking-status" ${run?`data-rank-run="${esc(run.runId)}"`:''} role="status">${esc(rankStatus(run))}</p>`;}
 async function rankedStart(){
- if(rankingStarting||!voyageUnlocked(data.slots[slot]))return;const s=data.slots[slot];if(!s.flightName){namePlane(()=>void rankedStart());return;}rankingStarting=true;
+ if(rankingStarting||!voyageUnlocked(data.slots[slot]))return;const s=data.slots[slot];if(!s.flightName||nameIssue(s.flightName)){if(s.flightName)toast(nameIssueMessage(nameIssue(s.flightName)));namePlane(()=>void rankedStart());return;}rankingStarting=true;
  modal('出発の準備中','<p>飛行機を登録しています。出発後は通信を待たずに遊べます。</p>',button('通信なしで飛ぶ','sky-start','subtle'));
  const stillHere=()=>dialog.open&&dialog.querySelector('h2')?.textContent==='出発の準備中'&&data.slots[slot]===s;
  try{const run=await rankings.begin(s,()=>save(data));if(stillHere())start('sky',0,'add',run);else rankings.exclude(run);}catch(e){if(!stillHere())return;if(e?.message==='VERSION')modal('ゲームの更新が必要です','<p>空の旅のルールが新しくなりました。タイトル画面に戻って更新すると、ランキングに参加できます。</p><p>通常の空の旅は、そのまま遊べます。</p>',button('通信なしで飛ぶ','sky-start','primary')+button('タイトルへ','title','subtle'));else modal('今はランキングに接続できません','<p>通常の空の旅は、そのまま遊べます。</p><p>ランキングが利用できるようになったら、もう一度参加してね。</p>',button('通信なしで飛ぶ','sky-start','primary')+button('出発画面へ','sky-deck','subtle'));}finally{rankingStarting=false;}
