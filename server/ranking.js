@@ -7,6 +7,7 @@ export const CURRENT_SEASON=SEASONS.at(-1);
 export const visibleSeasons=()=>SEASONS.filter(s=>!s.hidden||s.id===CURRENT_SEASON.id);
 const seasonById=id=>visibleSeasons().find(s=>s.id===id);
 import {flightName,flightDesign} from '../src/flight-profile.js';
+import {nameAllowed,HIDDEN_NAME} from '../src/name-filter.js';
 export const schema=[
  `CREATE TABLE IF NOT EXISTS mm_pilots (uid uuid PRIMARY KEY, secret_hash text UNIQUE NOT NULL, created_at timestamptz NOT NULL DEFAULT now())`,
  `CREATE TABLE IF NOT EXISTS mm_voyages (id uuid PRIMARY KEY, uid uuid NOT NULL REFERENCES mm_pilots(uid), state text NOT NULL DEFAULT 'open', steps integer NOT NULL DEFAULT 0, last_level integer NOT NULL DEFAULT -1, distance bigint NOT NULL DEFAULT 0, snapshot jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now())`,
@@ -29,7 +30,7 @@ export function service(query){
   if(action==='board'){
    const season=b.season===undefined||b.season===null||b.season===''?CURRENT_SEASON:seasonById(Number(b.season));if(!season)fail('SEASON',404);
    const rows=season.id===1?await query('SELECT uid,distance,snapshot,achieved_at FROM mm_bests ORDER BY distance DESC,achieved_at ASC,uid ASC LIMIT 100',[]):await query('SELECT uid,distance,snapshot,achieved_at FROM mm_season_bests WHERE season=$1 ORDER BY distance DESC,achieved_at ASC,uid ASC LIMIT 100',[season.id]);
-   return {season:seasonInfo(season),seasons:visibleSeasons().map(seasonInfo),entries:rows.map((r,i)=>({rank:i+1,uid:r.uid,distance:Number(r.distance),name:r.snapshot.name,design:r.snapshot.design,achieved:r.achieved_at}))};
+   return {season:seasonInfo(season),seasons:visibleSeasons().map(seasonInfo),entries:rows.map((r,i)=>({rank:i+1,uid:r.uid,distance:Number(r.distance),name:nameAllowed(r.snapshot.name)?r.snapshot.name:HIDDEN_NAME,design:r.snapshot.design,achieved:r.achieved_at}))};
   }
   if(action==='register'){
    if(typeof key!=='string'||!/^[a-f0-9]{64}$/.test(key))fail('AUTH',401);
@@ -41,7 +42,7 @@ export function service(query){
   if(action==='standing'){const rows=await query(`SELECT b.distance,1+(SELECT count(*) FROM mm_season_bests x WHERE x.season=b.season AND (x.distance>b.distance OR (x.distance=b.distance AND (x.achieved_at<b.achieved_at OR (x.achieved_at=b.achieved_at AND x.uid<b.uid))))) AS rank FROM mm_season_bests b WHERE b.uid=$1 AND b.season=$2`,[uid,CURRENT_SEASON.id]);return {season:seasonInfo(CURRENT_SEASON),...(rows.length?{rank:Number(rows[0].rank),distance:Number(rows[0].distance)}:{rank:null,distance:0})};}
   if(!uuid(b.runId))fail('INPUT',400);
   if(action==='start'){
-   if(!flightName(b.name))fail('NAME',400);if(b.protocol!==CURRENT_SEASON.protocol)fail('VERSION',409);
+   if(!flightName(b.name)||!nameAllowed(flightName(b.name)))fail('NAME',400);if(b.protocol!==CURRENT_SEASON.protocol)fail('VERSION',409);
    await query("DELETE FROM mm_voyages WHERE uid=$1 AND created_at<now()-interval '48 hours'",[uid]);
    const existing=await query('SELECT id,uid,snapshot FROM mm_voyages WHERE id=$1',[b.runId]);if(existing.length){if(existing[0].uid!==uid)fail('AUTH',403);if(existing[0].snapshot.season!==CURRENT_SEASON.id)fail('VERSION',409);return {runId:b.runId,protocol:CURRENT_SEASON.protocol,seed:existing[0].snapshot.seed,season:seasonInfo(CURRENT_SEASON)};}
    await query("DELETE FROM mm_voyages WHERE uid=$1 AND id IN (SELECT id FROM mm_voyages WHERE uid=$1 ORDER BY created_at DESC OFFSET 9)",[uid]);
