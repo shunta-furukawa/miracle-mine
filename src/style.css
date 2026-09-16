@@ -402,3 +402,5 @@ dialog.region-dialog{width:100vw;max-width:none;height:100dvh;max-height:none;ma
 @keyframes star-pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 @media(prefers-reduced-motion:reduce){.star-big{animation:none}}
 @media(orientation:landscape) and (max-height:500px){.star-result{margin-top:4px;padding:6px 10px;gap:2px}.star-big{font-size:22px}.star-metrics{font-size:11px}.star-goal{font-size:10px}.intro-stars{gap:4px;margin:0 auto 8px}.intro-star-row{padding:4px 10px;gap:6px}.intro-star-label{font-size:10px}.intro-star-marks{font-size:15px}.intro-star-meta span{font-size:10px;padding:2px 7px}}
+
+.about-links{display:flex;flex-direction:column;gap:6px;margin:14px 0 6px;font-size:14px}.about-links a{color:#27706f;font-weight:700}.settings-note{margin-top:8px}

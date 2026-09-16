@@ -18,7 +18,7 @@ createServer(async (req, res) => {
     const path = decodeURIComponent(url.pathname);
     if (path === '/api/share') { req.body = await readBody(req); return (await loadShare())(req, vercelResponse(res)); }
     if (path === '/api/ranking') { res.writeHead(503, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }).end('{"error":"UNAVAILABLE"}'); return; }
-    const file = resolve(root, '.' + (path === '/' ? '/index.html' : path));
+    const file = resolve(root, '.' + (path === '/' ? '/index.html' : path === '/about' ? '/about.html' : path));
     if (!file.startsWith(root + sep)) { res.writeHead(403).end(); return; }
     const data = await readFile(file);
     res.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream' }).end(data);

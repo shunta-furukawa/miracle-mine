@@ -49,5 +49,11 @@
       "includeFiles": "{dist/assets/*.webp,server/assets/*}",
       "maxDuration": 60
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    }
+  ]
 }
