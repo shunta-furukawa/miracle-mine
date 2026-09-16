@@ -25,3 +25,8 @@ test('the deploy bootstrap template exposes exactly one commit placeholder in co
  assert.ok(src.includes("const COMMIT='__COMMIT__'"));
  assert.ok((await read('scripts/deploy-payload.mjs')).includes("replaceAll('__COMMIT__'"),'every placeholder is filled');
 });
+test('the game and the share landing name the X account for cards',async()=>{
+ assert.ok((await read('src/index.html')).includes('name="twitter:site" content="@MiracleMine0123"'));
+ assert.ok((await read('api/share.js')).includes('name="twitter:site" content="@MiracleMine0123"'));
+ const app=await read('src/app.js');assert.ok(app.includes("reportShareEvent('visit','title',via)")&&app.includes("reportShareEvent('start','title',arrivedFrom)"));
+});
