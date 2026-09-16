@@ -31,8 +31,8 @@ Production branch: `main`. Git integration must be enabled in Vercel for automat
 
 - Airplane paint changes the preview; wing/propeller/emblem choices are saved as design records, not separate rendered aircraft yet.
 - Five chapters have distinct missions, targets, and atmospheric tints; the base landscape illustration is shared.
-- Balance values are initial settings and need playtesting with the intended player.
-- Color, digits, and mineral sigils are redundant cues; formal color-vision simulation and physical iPhone testing remain.
+- Balance values have been tuned through playtesting with the intended players; further adjustment follows release feedback.
+- Color, digits, and mineral sigils are redundant cues; iPhone testing is done, formal color-vision simulation remains.
 - In-stage progress is not persisted; cleared stages and customization are saved.
 
 ## Tests
