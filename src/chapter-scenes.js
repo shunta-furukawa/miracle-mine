@@ -13,7 +13,7 @@ const subtitles=[
 let active=null;
 
 /** A chapter boundary owns focus until an explicit action, never a timer. */
-export function showChapterScene(index,{clear=false,resume=false,silent=false,completed=[],previous=completed,paint=0,design={paint},record=null,onNext,onMap,onShare,onRetry}={}){
+export function showChapterScene(index,{clear=false,resume=false,silent=false,completed=[],previous=completed,paint=0,design={paint},record=null,onNext,onMap,onShare}={}){
  active?.();
  const chapter=chapters[index],scene=index+1;
  const previousFocus=document.activeElement;
@@ -35,7 +35,7 @@ export function showChapterScene(index,{clear=false,resume=false,silent=false,co
    ${record?`<p class="chapter-stars"><span class="stars" aria-label="${record.stars}つ星">${starText(record.stars)}</span> ${formatTime(record.time)} · 割った回数 ${record.breaks}${record.improved?' · 新記録！':''}</p>`:''}
    <p class="chapter-thanks">${chapter.guardian}「${chapter.end}」</p>
    <div class="chapter-parts">${collectionStrip(completed)}<small>${completed.length} / 5 部品</small></div>`:`<p class="chapter-subtitle">${subtitles[index]}</p><p class="chapter-destination">出会う守り手 · ${chapter.guardian}</p>`}
-   <div class="chapter-controls"><button class="chapter-continue">${clear?(index===4?'おじいちゃんと初飛行へ ▸':`第${index+2}章へ ▸`):resume?'冒険の地図へ ▸':'物語をはじめる ▸'}</button>${clear&&onRetry?'<button class="chapter-map chapter-retry">もう一度</button>':''}${clear?'<button class="chapter-map">冒険の地図へ</button>':''}${clear&&onShare?'<button class="chapter-map chapter-share">共有する</button>':''}</div>
+   <div class="chapter-controls"><button class="chapter-continue">${clear?(index===4?'おじいちゃんと初飛行へ ▸':`第${index+2}章へ ▸`):resume?'冒険の地図へ ▸':'物語をはじめる ▸'}</button>${clear?'<button class="chapter-map">冒険の地図へ</button>':''}${clear&&onShare?'<button class="chapter-map chapter-share">共有する</button>':''}</div>
   </div>
  </section>`;
  root.querySelector('.chapter-landscape').style.backgroundPosition=`${scene%3*50}% ${Math.floor(scene/3)*100}%`;
@@ -44,7 +44,7 @@ export function showChapterScene(index,{clear=false,resume=false,silent=false,co
  stage?.addEventListener('animationend',event=>{if(event.animationName==='part-dock')finishAssembly();});
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)finishAssembly();
  function close(){if(closed)return;closed=true;document.dispatchEvent(new CustomEvent('miracle:chapter',{detail:{open:false}}));root.close();root.remove();active=null;if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});}
- root.addEventListener('click',event=>{if(event.target.closest('.chapter-share')){onShare?.();return;}if(event.target.closest('.chapter-retry')){close();onRetry?.();return;}const next=event.target.closest('.chapter-continue'),map=event.target.closest('.chapter-map');if(!next&&!map)return;close();(next?onNext:onMap)?.();});
+ root.addEventListener('click',event=>{if(event.target.closest('.chapter-share')){onShare?.();return;}const next=event.target.closest('.chapter-continue'),map=event.target.closest('.chapter-map');if(!next&&!map)return;close();(next?onNext:onMap)?.();});
  root.addEventListener('cancel',event=>{event.preventDefault();root.querySelector('.chapter-continue').focus();});
  document.body.append(root);root.showModal();document.dispatchEvent(new CustomEvent('miracle:chapter',{detail:{open:true,clear,silent}}));active=close;root.querySelector('.chapter-continue').focus();
 }
