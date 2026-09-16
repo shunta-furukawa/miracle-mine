@@ -23,3 +23,7 @@ Character and treasure backgrounds were removed by connected magenta-key extract
 ## 第6章 領域カットイン背景（0.18）
 
 `src/assets/sky-regions/` の `clouds.webp`（雲の海）、`afterglow.webp`（夕映えの回廊）、`stars.webp`（星の高み）、`farsky.webp`（果ての空）は、プロジェクトオーナーが既存の空の風景（`sky-world.webp`）を参考画像として画像生成ツールで作成した本プロジェクト用のオリジナルイラスト。1600×900のWebPに変換して同梱し、`sky-regions.js` の全画面カットイン背景と、その領域を飛んでいる間の空の旅のゲーム背景（`.game-landscape[data-region]`、領域が変わるとクロスフェード）に使う。`sky-world.webp` は出発デッキのカードと共有プレビューで引き続き使う。人物・機体・文字は含めない。
+
+## 盤面の枠（0.19.5）
+
+`src/assets/board-frame-add.webp`（青緑の石）と `board-frame-multiply.webp`（紫の石）は、プロジェクトオーナーが画像生成ツールで作成した真鍮の額縁。内側は完全に透明で、盤面の塗り（＋は深い緑 `#123c43`、×は紫 `#3b1f55`）の上に `.board::before/::after` として重ね、演算に合わせてクロスフェードする。元画像 1254×1254 PNG を、外周の薄いにじみ（alpha<90）を落としてから枠の外縁で切り抜き、1024×1024 の透過 WebP にした。内縁の位置（左右 4.21%／4.68%、上下 5.24%／5.63%、盤面内側基準）は CSS の inset に反映済み。角の飾り板が内側へ約1.5%はみ出すため、盤面の padding は 2.4%。
