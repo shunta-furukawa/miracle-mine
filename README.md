@@ -24,7 +24,7 @@ Open http://localhost:3000. The build copies `src/` to `dist/`.
 
 `/about` (served from `src/about.html` through a `vercel.json` rewrite and precached for offline use) carries how to play, target age, privacy notes, credits, terms and the contact channel (X: [@MiracleMine0123](https://x.com/MiracleMine0123)). The settings dialog links to both. The title screen and settings show the version, which `scripts/build.mjs` injects from `package.json` into `app.js` and `about.html` (`__VERSION__`); bump `package.json` and `package-lock.json` together. While the major version is 0 the label reads `PROTOTYPE`.
 
-Vercel Web Analytics is loaded from `/_vercel/insights/script.js` on both pages (cookieless page views); enable Web Analytics for the project in the Vercel dashboard or the script returns 404 harmlessly.
+Vercel Web Analytics is loaded from `/_vercel/insights/script.js` on both pages (cookieless page views); Web Analytics is enabled for the project; if it is ever re-enabled, redeploy afterwards, because the script route is wired in at deploy time (until then it returns 404 harmlessly). Headless and automated browsers are excluded by the script itself.
 
 ## Continuous integration and deployment
 

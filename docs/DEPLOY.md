@@ -9,7 +9,8 @@ Vercel の `miracle-mine` プロジェクトは GitHub と連携していない�
 3. `node scripts/deploy-payload.mjs <sha> <出力先>.json` でペイロードを作る。SHA が GitHub に存在しないと失敗する。
 4. Vercel MCP の `deploy_to_vercel` に `target: "production"`、`name: "miracle-mine"`、`teamId`、`files: <ペイロードの配列>` を渡す。手元なら Vercel CLI で `vercel --prod` でもよい（その場合はリポジトリ全体が送られる）。
 5. 本番の `https://miracle-mine.vercel.app/sw.js` を 20 秒間隔で取得し、キャッシュ名が 2 で控えたものに変わるまで待つ（1〜2 分）。ビルドが失敗しても前のデプロイが本番に残る。
-6. 検証: 主要ファイルが `dist/` とバイト単位で一致、`/api/ranking?action=status` が `ready: true`、`/api/share?s=…&image=1` が 1200×630 の PNG。ランキングには書き込まない。
+6. Vercel の設定（Web Analytics の有効化など）を変えたときも、反映には再デプロイが必要。
+7. 検証: 主要ファイルが `dist/` とバイト単位で一致、`/api/ranking?action=status` が `ready: true`、`/api/share?s=…&image=1` が 1200×630 の PNG。ランキングには書き込まない。
 
 ## 仕組み
 
