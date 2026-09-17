@@ -26,7 +26,7 @@
 | 連絡先 | X @MiracleMine0123 |
 | 公式サイト | https://miracle-mine.vercel.app |
 | 紹介ページ | https://miracle-mine.vercel.app/about |
-| 公開日 | 2026 年 9 月 22 日（バージョン 1.0.0） |
+| 公開日 | 2026 年 9 月 17 日（バージョン 1.0.0） |
 | 操作 | タッチ、マウス、キーボード |
 | セーブ | 端末内に 3 スロット。登録不要 |
 
