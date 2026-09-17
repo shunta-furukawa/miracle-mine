@@ -1,0 +1,32 @@
+name: x-trial
+# Temporary: exercises the X posting script on this branch without posting. Removed before merge.
+on:
+  push:
+    branches: [claude/release-marketing-strategy-f1o471]
+permissions:
+  contents: read
+jobs:
+  trial:
+    runs-on: ubuntu-latest
+    env:
+      X_API_KEY: ${{ secrets.X_API_KEY }}
+      X_API_SECRET: ${{ secrets.X_API_SECRET }}
+      X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+      X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: check credentials
+        run: node scripts/x-post.mjs --mode=check
+      - name: dry-run with the live board
+        run: node scripts/x-post.mjs --mode=dry-run --out=x-out/live
+      - name: dry-run with sample data
+        run: node scripts/x-post.mjs --mode=dry-run --sample --out=x-out/sample
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: x-trial-output
+          path: x-out
+          if-no-files-found: ignore
