@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'check = verify credentials only / dry-run = build text and image / post = publish'
+        description: 'check = verify credentials / test = one visible test post / dry-run = build text and image / post = publish'
         type: choice
-        options: [check, dry-run, post]
+        options: [check, test, dry-run, post]
         default: dry-run
       sample:
         description: 'Use a sample ranking instead of the live board'

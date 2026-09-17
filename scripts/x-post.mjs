@@ -1,5 +1,5 @@
 /* Weekly ranking post for X (@MiracleMine0123). No dependencies: OAuth 1.0a signing with node:crypto.
-   Modes: check (verify credentials), dry-run (build text + image, post nothing), post (publish).
+   Modes: check (verify credentials), test (one visible test post), dry-run (build text + image, post nothing), post (publish).
    See docs/X-AUTOPOST.md. Secrets come from the environment: X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET. */
 import {createHmac,randomBytes} from 'node:crypto';
 import {writeFile,mkdir} from 'node:fs/promises';
@@ -54,6 +54,15 @@ export async function main(argv=process.argv.slice(2),env=process.env){
  const me=await xFetch(creds,'GET',`${API}/users/me`);
  console.log(`authenticated as @${me.data.username} (${me.data.id})`);
  if(mode==='check')return;
+ if(mode==='test'){
+  // One visible post to prove the whole path (media upload + create); delete it from X afterwards if unwanted.
+  const text=`自動投稿のテストです（${jstDate()}）。空の旅ランキングを毎週お知らせする予定です。`;
+  const r=await fetch(`${SITE}/api/ranking?action=board`,{cache:'no-store'});const board=r.ok?await r.json():{entries:[]};
+  let mediaIds=[];
+  if(board.entries?.length){const img=await fetch(cardUrlFor(board.entries[0]));if(img.ok){const png=Buffer.from(await img.arrayBuffer());const form=new FormData();form.append('media',new Blob([png],{type:'image/png'}),'card.png');form.append('media_category','tweet_image');form.append('media_type','image/png');const media=await xFetch(creds,'POST',`${API}/media/upload`,{form});const id=media.data?.id||media.media_id_string;if(id)mediaIds=[id];console.log('media uploaded:',id);}}
+  const posted=await xFetch(creds,'POST',`${API}/tweets`,{json:{text,...(mediaIds.length?{media:{media_ids:mediaIds}}:{})}});
+  console.log(`posted: https://x.com/${me.data.username}/status/${posted.data.id}`);return;
+ }
  let board;
  if(sample)board={season:{id:2,name:'気まぐれな気流'},entries:[{name:'かいはつ工房 1号機',distance:7420,design:{paint:0,wing:1,propeller:2,decoration:0}},{name:'そらいろ号',distance:5210,design:{paint:2,wing:0,propeller:1,decoration:1}},{name:'ゆうしゃのひこうき',distance:3980,design:{paint:1,wing:2,propeller:0,decoration:2}}]};
  else{const r=await fetch(`${SITE}/api/ranking?action=board`,{cache:'no-store'});if(!r.ok)throw new Error(`ranking board → ${r.status}`);board=await r.json();}
