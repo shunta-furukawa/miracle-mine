@@ -20,6 +20,7 @@ OAuth 2.0 の Client ID / Client Secret / Refresh Token と Bearer Token は使�
 Actions → x-weekly → Run workflow。
 
 - `check`: 認証だけ確認する（`GET /2/users/me`）。投稿しない。
+- `test`: 「自動投稿のテストです」という投稿を 1 件出す（ランキングがあれば 1 位のカード付き）。動作確認用で、あとで X 上で削除してよい。
 - `dry-run`: 文面と画像を作って成果物（x-weekly-output）に置く。投稿しない。`sample` を有効にすると、ランキングが空でも見本データで生成する。
 - `post`: 投稿する。同じ日付の投稿がすでにあれば飛ばす（`force` で無視）。
 
