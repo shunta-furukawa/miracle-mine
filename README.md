@@ -6,7 +6,7 @@ Steampunk number puzzle adventure.
 
 ## Current status
 
-Playable prototype: 30 story stages, three local save slots, score attack, endless mode, pointer/keyboard input, sound effects, and workshop design records.
+Released 1.0.0 on 2026-09-17 at https://miracle-mine.vercel.app. 30 story stages, three local save slots, score attack, endless mode, the hidden sky voyage chapter with a seasonal leaderboard, share cards, and an installable offline PWA.
 See [game design](docs/game-design.md) for the approved prototype scope.
 
 ## Development
