@@ -1,0 +1,53 @@
+name: x-weekly
+# Weekly ranking post to X. Manual runs can check credentials or dry-run without posting.
+on:
+  schedule:
+    - cron: '30 11 * * 6'   # Saturday 20:30 JST
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'check = verify credentials only / dry-run = build text and image / post = publish'
+        type: choice
+        options: [check, dry-run, post]
+        default: dry-run
+      sample:
+        description: 'Use a sample ranking instead of the live board'
+        type: boolean
+        default: false
+      force:
+        description: 'Post even if a post for today already exists'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: x-weekly
+  cancel-in-progress: false
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: |
+          MODE="${{ github.event_name == 'schedule' && 'post' || inputs.mode }}"
+          ARGS="--mode=$MODE --out=x-out"
+          if [ "${{ inputs.sample }}" = "true" ]; then ARGS="$ARGS --sample"; fi
+          if [ "${{ inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
+          echo "node scripts/x-post.mjs $ARGS"
+          node scripts/x-post.mjs $ARGS
+      - name: Keep the generated text and image
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: x-weekly-output
+          path: x-out
+          if-no-files-found: ignore
