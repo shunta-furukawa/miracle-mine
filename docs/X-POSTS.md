@@ -1,12 +1,12 @@
 # X 初期投稿セット（リリース前）
 
-アカウント: @MiracleMine0123。固定ポストの下に、リリース前の 5 日間で 1 日 1 本ずつ積む。画像はすべて 0.20.2 の実画面をヘッドレス Chromium で撮影したもの（1920×1080、5 のみ 1688×780 のスマホ横向き）。撮り直すときは `docs/RELEASE-MARKETING.md` の手順どおり、30 ステージクリア済みのセーブを localStorage に入れてから撮る。
+アカウント: @MiracleMine0123。画像は `docs/x-assets/`（投稿用 JPEG、プロフィールのアイコンとヘッダーも同じ場所）。固定ポストの下に、リリース前の 5 日間で 1 日 1 本ずつ積む。画像はすべて 0.20.2 の実画面をヘッドレス Chromium で撮影したもの（1920×1080、5 のみ 1688×780 のスマホ横向き）。撮り直すときは `docs/RELEASE-MARKETING.md` の手順どおり、30 ステージクリア済みのセーブを localStorage に入れてから撮る。
 
 各投稿の文字数は X の重み付け（全角 2、半角 1、URL 23）で 280 以内を確認済み。X の「画像の説明を追加」に代替テキストを入れる。
 
 ## 1 日目: ルカとトトじい
 
-画像: `post1-title.png`、`post1-dialogue.png`
+画像: `docs/x-assets/post1-title.jpg`、`docs/x-assets/post1-dialogue.jpg`
 
 > 主人公のルカと、発明家のおじいちゃん・トトじい。止まった水車や港を数字の力で直しながら、蒸気飛行機の部品を集める旅に出ます。森の番人モスも一緒。
 > #ミラクルマイン #MiracleMine
@@ -16,7 +16,7 @@
 
 ## 2 日目: あそびかた
 
-画像: `post2-howto.png`
+画像: `docs/x-assets/post2-howto.jpg`
 
 > あそびかたは、これだけ。となりあう数字をなぞって、お題の数をつくる。3＋3＝6でぴったり！
 > お題より小さいときは合体して残るので、次の一手の材料に。上下・左右・ななめ、どこでもつながります。
@@ -26,7 +26,7 @@
 
 ## 3 日目: 5 つの章と飛行機の部品
 
-画像: `post3-workshop.png`
+画像: `docs/x-assets/post3-workshop.jpg`
 
 > 森・海・洞窟・火山・高原。5つの章をクリアするたびに、翼、胴体、動力の核、ボイラーとプロペラ、最後の飛行装置が手に入ります。5つそろえば蒸気飛行機が完成。色や翼のかたちも選べます。
 > #ミラクルマイン
@@ -35,7 +35,7 @@
 
 ## 4 日目: 空の旅と秘宝
 
-画像: `post4-skyvoyage.png`、`post4-treasures.png`
+画像: `docs/x-assets/post4-skyvoyage.jpg`、`docs/x-assets/post4-treasures.jpg`
 
 > 飛行機が完成したら、隠し第6章「トトじいと空の旅」へ。雲の海から星の高み、果ての空まで、お題を解くほど遠くへ飛べます。飛距離ランキングと、6つの空の秘宝あつめも。
 > #ミラクルマイン #MiracleMine
@@ -45,7 +45,7 @@
 
 ## 5 日目: 保護者の方へ
 
-画像: `post5-phone-title.png`、`post5-phone-board.png`
+画像: `docs/x-assets/post5-phone-title.jpg`、`docs/x-assets/post5-phone-board.jpg`
 
 > 保護者の方へ。Miracle Mineは無料で、広告も課金もアカウント登録もありません。冒険の記録は端末の中だけに保存。スマホ・タブレット・PCのブラウザで動き、ホーム画面に追加すればオフラインでも遊べます。
 > https://miracle-mine.vercel.app/about?via=x
@@ -56,7 +56,7 @@
 
 ## 6 日目以降: 開発者の思い（スレッド 6 本）
 
-文面は `docs/DEVELOPER-NOTE.md` の「X スレッド版」。固定ポストへの返信として連投するか、単独スレッドで出す。画像は不要（1 本目に `post2-howto.png` を添えてもよい）。同じ内容の長文は note 記事版として `?via=note` 付きで公開し、about ページの「開発者より」にも短い版を載せる。
+文面は `docs/DEVELOPER-NOTE.md` の「X スレッド版」。固定ポストへの返信として連投するか、単独スレッドで出す。画像は不要（1 本目に `docs/x-assets/post2-howto.jpg` を添えてもよい）。同じ内容の長文は note 記事版として `?via=note` 付きで公開し、about ページの「開発者より」にも短い版を載せる。
 
 ## 運用メモ
 
