@@ -27,6 +27,9 @@ test('the deploy bootstrap template exposes exactly one commit placeholder in co
 });
 test('the game and the share landing name the X account for cards',async()=>{
  assert.ok((await read('src/index.html')).includes('name="twitter:site" content="@MiracleMine0123"'));
+ const index=await read('src/index.html');
+ // Ad reviewers and crawlers do not run the game: the noscript block must describe it in words.
+ for(const needle of ['<noscript>','無料で遊べます','広告は表示しません','登録不要です','href="/about"','JavaScript を有効に'])assert.ok(index.includes(needle),needle);
  assert.ok((await read('api/share.js')).includes('name="twitter:site" content="@MiracleMine0123"'));
  const app=await read('src/app.js');assert.ok(app.includes("reportShareEvent('visit','title',via)")&&app.includes("reportShareEvent('start','title',arrivedFrom)"));
 });
