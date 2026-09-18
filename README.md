@@ -111,8 +111,9 @@ Built-in image generation prompts: (1) “Miracle Mine” on two compact lines, 
 
 ## Licensed soundtrack (0.8)
 
-Breeze (title/flight), Windmill_Village (map/workshop), and Wonder6 (puzzles)
-by PeriTune use the author's CC BY 4.0 loop recordings. Ten sound effects and
+Breeze (title/flight), Windmill_Village (map/workshop), Wonder6 (puzzles) and the
+six chapter themes (Harvest3, Sea_Breeze, Ice_Cave, Prairie4, UnknownWorld2_Harp,
+UnknownWorld2) by PeriTune use the author's CC BY 4.0 loop recordings. Ten sound effects and
 a chapter jingle use Kenney CC0 recordings. Settings include independent BGM
 and SE switches/volumes and visible attribution. The title has a music button.
 No music or sound-effect synthesis is used. See [audio licenses](docs/AUDIO-LICENSES.md)
