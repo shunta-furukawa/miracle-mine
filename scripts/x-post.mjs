@@ -34,6 +34,11 @@ async function xFetch(creds,method,url,{query={},json,form}={}){
 export const fmt=n=>Number(n).toLocaleString('ja-JP');
 const medals=['🥇','🥈','🥉'];
 /* Post text without a URL (cheaper per X's pay-per-use pricing); the profile carries the link. */
+/* The invitation link carries its own slug, so visits and new saves from the weekly post are counted apart
+   from the ads. A post with a link costs more per call than one without: see docs/X-AUTOPOST.md. */
+export const POST_SOURCE='x-weekly';
+export const inviteUrl=`${SITE}/?utm_source=${POST_SOURCE}`;
+
 /* The attached card lists the top ten, so the text names only the leader and leaves the rest to the image. */
 export function weeklyText(board,date){
  const first=board.entries[0],name=nameAllowed(first.name)?first.name:HIDDEN_NAME;
@@ -41,7 +46,7 @@ export function weeklyText(board,date){
  return [`空の旅ランキング（${date} 時点）`,`シーズン「${board.season.name}」`,'',
   `${medals[0]} ${name}　${fmt(first.distance)} m`,
   shown>1?`上位 ${shown} 機は画像のとおり。`:'',
-  '','ランキングは完成した飛行機で挑戦できます。みんなの飛行機、どこまで飛んだ？','#ミラクルマイン'].filter((l,i)=>l!==''||i!==4).join('\n');
+  '','ランキングは完成した飛行機で挑戦できます。きみの飛行機はどこまで飛ぶ？',inviteUrl,'#ミラクルマイン'].filter((l,i)=>l!==''||i!==4).join('\n');
 }
 export const weightOf=t=>{let w=0;for(const ch of t){const c=ch.codePointAt(0);w+=(c<0x1100||(c>=0x2000&&c<=0x200D)||(c>=0x2010&&c<=0x201F))?1:2;}return w;};
 const PNG_MAGIC='89504e470d0a1a0a';

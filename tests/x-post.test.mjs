@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {oauthHeader,weeklyText,weightOf,cardUrlFor,credsFromEnv,boardCardUrl,BOARD_TOP,assertPng} from '../scripts/x-post.mjs';
+import {entrySource,SOURCE_SLUG} from '../src/analytics.js';
+import {oauthHeader,weeklyText,weightOf,cardUrlFor,credsFromEnv,boardCardUrl,BOARD_TOP,assertPng,inviteUrl,POST_SOURCE} from '../scripts/x-post.mjs';
 
 test('OAuth 1.0a signature matches the reference example from the X documentation',()=>{
  const header=oauthHeader({method:'POST',url:'https://api.twitter.com/1.1/statuses/update.json',params:{include_entities:'true',status:'Hello Ladies + Gentlemen, a signed OAuth request!'},
@@ -17,7 +18,11 @@ test('weekly text stays within the limit and hides names that fail the screen',(
  assert.ok(!text.includes('ちんちん'),'a name that fails the screen never reaches the post');
  assert.ok(text.includes('#ミラクルマイン'));
  assert.ok(weightOf(text)<=280,String(weightOf(text)));
- assert.ok(!/https?:\/\//.test(text),'no link keeps the post at the cheaper rate');
+ // The invitation link is tagged so the weekly post is counted apart from the ads (see src/analytics.js).
+ assert.ok(text.includes('https://miracle-mine.vercel.app/?utm_source=x-weekly'));
+ assert.ok(text.includes('きみの飛行機はどこまで飛ぶ？'));
+ assert.equal(text.match(/https?:\/\//g).length,1,'one link only: each extra one costs another call');
+ assert.ok(!/[?&]via=/.test(text),'via would wipe utm_source out of the address bar');
 });
 test('a blocked leader is replaced by the hidden name, and a single entry needs no image line',()=>{
  const one={season:{name:'気まぐれな気流'},entries:[{name:'ちんちん号',distance:900}]};
@@ -43,4 +48,10 @@ test('the card image is checked before it is handed to X',()=>{
  assert.throws(()=>assertPng(html,'https://example.test/card','text/html; charset=utf-8'),
   /not a PNG: 3\d bytes, content-type text\/html; charset=utf-8, from https:\/\/example\.test\/card/);
  assert.throws(()=>assertPng(Buffer.alloc(0),'https://example.test/card',null),/content-type none/);
+});
+
+test('the invitation link uses a slug the tally accepts',()=>{
+ assert.equal(inviteUrl,'https://miracle-mine.vercel.app/?utm_source=x-weekly');
+ assert.equal(entrySource(inviteUrl),POST_SOURCE);
+ assert.ok(SOURCE_SLUG.test(POST_SOURCE));
 });
