@@ -14,7 +14,7 @@ export default async function handler(req,res){
  try{
   const url=new URL(req.url,'https://miracle-mine.vercel.app'),action=url.searchParams.get('action');
   if(!['GET','POST'].includes(req.method))return send(405,{error:'METHOD'});
-  if((req.method==='GET')!==['status','board'].includes(action))return send(405,{error:'METHOD'});
+  if((req.method==='GET')!==['status','board','tallies'].includes(action))return send(405,{error:'METHOD'});
   if(req.headers['sec-fetch-site']==='cross-site')return send(403,{error:'ORIGIN'});
   if(Number(req.headers['content-length']||0)>4096)return send(413,{error:'SIZE'});
   let body=req.method==='GET'?{season:url.searchParams.get('season')}:req.body||{};if(typeof body==='string'){if(body.length>4096)return send(413,{error:'SIZE'});try{body=JSON.parse(body)}catch{return send(400,{error:'INPUT'})}}
