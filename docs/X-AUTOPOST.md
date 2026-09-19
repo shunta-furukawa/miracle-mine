@@ -35,3 +35,13 @@ Actions → x-weekly → Run workflow。
 - 文面は `weeklyText`、画像は `cardUrlFor`。`npm test` の `x-post` テストで文字数（280 以内）と署名を検証している。
 - 曜日や時刻は cron（UTC）を変える。GitHub の cron は数分〜1 時間遅れることがある。
 - 投稿を止めるには workflow を無効化するか、Secrets を消す。
+
+## 週次投稿の画像（2026-09-19 変更）
+
+添付画像を、1 位の飛行機カード（1200×630）から **上位 10 機の横長ランキングカード（1600×900、16:9）** に変えた。
+
+- 描画: `server/share-card.js` の `boardCardElement` / `renderBoardCard`。背景は空の世界、各行に順位・飛行機の絵・名前・飛距離。5 機までは 1 列、6 機以上は 2 列。
+- エンドポイント: `GET /api/share?board=1`（`&season=<id>` で過去シーズン）。ハンドラーが `/api/ranking?action=board` を取りに行くので、URL からは偽造できない。キャッシュは `max-age=300, s-maxage=900`。
+- 投稿スクリプトは `boardCardUrl()` でこの URL を取得する。`--sample` のときだけ従来の 1 位カードを使う。
+- 本文は 1 位だけを書き、残りは画像に任せる（`weeklyText`）。
+- 名前は `/api/ranking` 側でマスク済みだが、カード描画でも `nameAllowed` を通して二重に守る。

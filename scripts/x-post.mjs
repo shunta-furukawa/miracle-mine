@@ -34,14 +34,23 @@ async function xFetch(creds,method,url,{query={},json,form}={}){
 export const fmt=n=>Number(n).toLocaleString('ja-JP');
 const medals=['🥇','🥈','🥉'];
 /* Post text without a URL (cheaper per X's pay-per-use pricing); the profile carries the link. */
+/* The attached card lists the top ten, so the text names only the leader and leaves the rest to the image. */
 export function weeklyText(board,date){
- const top=board.entries.slice(0,3).map((e,i)=>`${medals[i]} ${nameAllowed(e.name)?e.name:HIDDEN_NAME}　${fmt(e.distance)} m`);
- return [`空の旅ランキング（${date} 時点）`,`シーズン「${board.season.name}」`,'',...top,'',`ランキングは完成した飛行機で挑戦できます。みんなの飛行機、どこまで飛んだ？`,'#ミラクルマイン'].join('\n');
+ const first=board.entries[0],name=nameAllowed(first.name)?first.name:HIDDEN_NAME;
+ const shown=Math.min(board.entries.length,BOARD_TOP);
+ return [`空の旅ランキング（${date} 時点）`,`シーズン「${board.season.name}」`,'',
+  `${medals[0]} ${name}　${fmt(first.distance)} m`,
+  shown>1?`上位 ${shown} 機は画像のとおり。`:'',
+  '','ランキングは完成した飛行機で挑戦できます。みんなの飛行機、どこまで飛んだ？','#ミラクルマイン'].filter((l,i)=>l!==''||i!==4).join('\n');
 }
 export const weightOf=t=>{let w=0;for(const ch of t){const c=ch.codePointAt(0);w+=(c<0x1100||(c>=0x2000&&c<=0x200D)||(c>=0x2010&&c<=0x201F))?1:2;}return w;};
 export const jstDate=(d=new Date())=>{const j=new Date(d.getTime()+9*3600e3);return `${j.getUTCMonth()+1}月${j.getUTCDate()}日`;};
 
-/* The #1 plane's own rank card, drawn by the production share renderer. */
+/* The landscape leaderboard card, drawn live by the production renderer from the real board. */
+export const BOARD_TOP=10;
+export const boardCardUrl=season=>`${SITE}/api/share?board=1${season?`&season=${encodeURIComponent(season)}`:''}`;
+
+/* The #1 plane's own rank card. Kept for the one-off test post. */
 export function cardUrlFor(entry){
  const slot={cleared:Array.from({length:30},(_,i)=>i),paint:entry.design?.paint??0,wing:entry.design?.wing??0,propeller:entry.design?.propeller??0,decoration:entry.design?.decoration??0,flightName:nameAllowed(entry.name)?entry.name:'',sky:{total:entry.distance,best:entry.distance,flights:1,treasures:[]}};
  return shareImageUrl(createSnapshot('rank',slot,{rank:1,distance:entry.distance}));
@@ -69,7 +78,7 @@ export async function main(argv=process.argv.slice(2),env=process.env){
  if(!board.entries?.length){console.log('ranking is empty: nothing to post');return;}
  const date=jstDate(),text=weeklyText(board,date),weight=weightOf(text);
  if(weight>280)throw new Error(`text too long: ${weight}/280`);
- const imageUrl=cardUrlFor(board.entries[0]);
+ const imageUrl=sample?cardUrlFor(board.entries[0]):boardCardUrl(board.season?.id);
  const img=await fetch(imageUrl);if(!img.ok)throw new Error(`card image → ${img.status}`);const png=Buffer.from(await img.arrayBuffer());
  await mkdir(outDir,{recursive:true});await writeFile(`${outDir}/post.txt`,text);await writeFile(`${outDir}/card.png`,png);
  console.log(`--- text (${weight}/280) ---\n${text}\n--- image ${png.length} bytes from ${imageUrl.slice(0,80)}… ---`);
