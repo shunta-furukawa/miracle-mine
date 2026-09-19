@@ -133,6 +133,13 @@
 - ランキング登録機体数（Neon の `mm_pilots` 件数）。
 - PWA インストール数（`appinstalled` を 1 イベント追加すれば取れる）。
 
+計測の実装（2026-09-19）: Vercel の Hobby プランは実行時ログの保持が 1 時間しかないため、`/api/share` の `share-event` ログは日次の集計には使えない。流入は **UTM パラメータ**で測る。広告・記事などのリンクは `?utm_source=x&utm_medium=cpc&utm_campaign=release` の形にし、Vercel Web Analytics の `utmSource` 次元で集計する（90 日保持）。`?via=` スラッグは共有カードの導線で引き続き使うが、アドレスバーの掃除では `via` と `kind` だけを消し、`utm_*` は残す（Analytics が読むため）。あたらしいセーブの作成時には Vercel のカスタムイベント `start` を送り、`from` に流入元（キャンペーンのスラッグ、`share`、`direct`）だけを入れる。件数のみで、名前・セーブの中身・端末情報は送らない。`va('event',…)` は `src/analytics.js`。Vercel 側の追加設定は不要（Web Analytics は有効化済み）。
+
+見る指標の出し方:
+- 流入: `aggregate_pageviews` を `by=utmSource` で集計。
+- 新規セーブ: `aggregate_events` / `count_events` を `filter=eventName eq 'start'`、内訳は `by=eventData/from`。
+- 転換率: 同じ `utm_source` の訪問者数と `start` 件数の比。
+
 X 広告の計測（2026-09-17 決定）: X ピクセル（コンバージョントラッキング）は入れない。/about で「Cookie を使わず、個人を特定しません」と明記していること、主な遊び手が小学生で X の広告ポリシーが 13 歳未満向けサイトでのピクセル利用を認めていないことが理由。広告のリンク先は `https://miracle-mine.vercel.app/?via=x-ad` にし、X 広告管理画面のリンククリック数と、サーバーログの `visit`（着地）・`start`（新規セーブ）の件数を突き合わせて効果を見る。キャンペーン目的は「ウェブサイトのトラフィック」のままにする（「コンバージョン」目的はピクセルが前提）。
 
 初月の目標は控えめに置き、翌月に見直す。
