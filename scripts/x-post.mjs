@@ -44,6 +44,11 @@ export function weeklyText(board,date){
   '','ランキングは完成した飛行機で挑戦できます。みんなの飛行機、どこまで飛んだ？','#ミラクルマイン'].filter((l,i)=>l!==''||i!==4).join('\n');
 }
 export const weightOf=t=>{let w=0;for(const ch of t){const c=ch.codePointAt(0);w+=(c<0x1100||(c>=0x2000&&c<=0x200D)||(c>=0x2010&&c<=0x201F))?1:2;}return w;};
+const PNG_MAGIC='89504e470d0a1a0a';
+export function assertPng(bytes,url,contentType){
+ if(bytes.subarray(0,8).toString('hex')===PNG_MAGIC)return bytes;
+ throw new Error(`card image is not a PNG: ${bytes.length} bytes, content-type ${contentType||'none'}, from ${url}`);
+}
 export const jstDate=(d=new Date())=>{const j=new Date(d.getTime()+9*3600e3);return `${j.getUTCMonth()+1}月${j.getUTCDate()}日`;};
 
 /* The landscape leaderboard card, drawn live by the production renderer from the real board. */
@@ -80,6 +85,9 @@ export async function main(argv=process.argv.slice(2),env=process.env){
  if(weight>280)throw new Error(`text too long: ${weight}/280`);
  const imageUrl=sample?cardUrlFor(board.entries[0]):boardCardUrl(board.season?.id);
  const img=await fetch(imageUrl);if(!img.ok)throw new Error(`card image → ${img.status}`);const png=Buffer.from(await img.arrayBuffer());
+ // A share URL that the deployed handler does not know falls through to the HTML landing page with a 200.
+ // Uploading that as image/png only fails later, inside X, as an opaque 400: check the magic bytes here instead.
+ assertPng(png,imageUrl,img.headers.get('content-type'));
  await mkdir(outDir,{recursive:true});await writeFile(`${outDir}/post.txt`,text);await writeFile(`${outDir}/card.png`,png);
  console.log(`--- text (${weight}/280) ---\n${text}\n--- image ${png.length} bytes from ${imageUrl.slice(0,80)}… ---`);
  if(mode!=='post'){console.log('dry-run: nothing posted');return;}
