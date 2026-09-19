@@ -15,8 +15,15 @@ export const schema=[
  `CREATE TABLE IF NOT EXISTS mm_bests (uid uuid PRIMARY KEY REFERENCES mm_pilots(uid), distance bigint NOT NULL, snapshot jsonb NOT NULL, achieved_at timestamptz NOT NULL DEFAULT now())`,
  `CREATE INDEX IF NOT EXISTS mm_bests_order ON mm_bests(distance DESC, achieved_at ASC, uid ASC)`,
  `CREATE TABLE IF NOT EXISTS mm_season_bests (season integer NOT NULL, uid uuid NOT NULL REFERENCES mm_pilots(uid), distance bigint NOT NULL, snapshot jsonb NOT NULL, achieved_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(season,uid))`,
- `CREATE INDEX IF NOT EXISTS mm_season_bests_order ON mm_season_bests(season, distance DESC, achieved_at ASC, uid ASC)`
+ `CREATE INDEX IF NOT EXISTS mm_season_bests_order ON mm_season_bests(season, distance DESC, achieved_at ASC, uid ASC)`,
+ /* Counts only. One row per day, entry point and event: no uid, name, address or device is stored. */
+ `CREATE TABLE IF NOT EXISTS mm_tally (day date NOT NULL, source text NOT NULL, event text NOT NULL, hits integer NOT NULL DEFAULT 0, PRIMARY KEY(day,source,event))`
 ];
+/* JST has no daylight saving, so a fixed offset keeps the days aligned with the reports without a timezone database. */
+const TALLY_DAY="(now() AT TIME ZONE 'UTC' + interval '9 hours')::date";
+export const TALLY_EVENTS=['visit','start'];
+export const TALLY_SOURCE=/^[a-z][a-z-]{0,23}$/;
+export const TALLY_DAYS=30;
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const uuid=s=>typeof s==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(s);
 const integer=n=>Number.isSafeInteger(n)&&n>=0;
@@ -27,6 +34,16 @@ export function service(query){
  return async function dispatch(action,b={},key=''){
   const seasonInfo=s=>({id:s.id,name:s.name,protocol:s.protocol,current:s.id===CURRENT_SEASON.id});
   if(action==='status')return {ready:true,protocol:CURRENT_SEASON.protocol,season:seasonInfo(CURRENT_SEASON),seasons:visibleSeasons().map(seasonInfo)};
+  if(action==='tallies'){
+   const rows=await query(`SELECT to_char(day,'YYYY-MM-DD') AS day,source,event,hits FROM mm_tally WHERE day > ${TALLY_DAY} - ($1::int) ORDER BY day DESC,source ASC,event ASC`,[TALLY_DAYS]);
+   return {days:TALLY_DAYS,rows:rows.map(r=>({day:r.day,source:r.source,event:r.event,hits:Number(r.hits)}))};
+  }
+  if(action==='tally'){
+   if(!TALLY_EVENTS.includes(b.event))fail('INPUT',400);
+   const source=typeof b.source==='string'&&TALLY_SOURCE.test(b.source)?b.source:'direct';
+   await query(`INSERT INTO mm_tally (day,source,event,hits) VALUES (${TALLY_DAY},$1,$2,1) ON CONFLICT (day,source,event) DO UPDATE SET hits=mm_tally.hits+1`,[source,b.event]);
+   return {counted:true};
+  }
   if(action==='board'){
    const season=b.season===undefined||b.season===null||b.season===''?CURRENT_SEASON:seasonById(Number(b.season));if(!season)fail('SEASON',404);
    const rows=season.id===1?await query('SELECT uid,distance,snapshot,achieved_at FROM mm_bests ORDER BY distance DESC,achieved_at ASC,uid ASC LIMIT 100',[]):await query('SELECT uid,distance,snapshot,achieved_at FROM mm_season_bests WHERE season=$1 ORDER BY distance DESC,achieved_at ASC,uid ASC LIMIT 100',[season.id]);

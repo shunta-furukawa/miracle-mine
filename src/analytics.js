@@ -13,3 +13,13 @@ export function entrySource(href) {
  } catch {}
  return 'direct';
 }
+
+/* Durable counts. Vercel's Hobby plan exposes neither UTM dimensions nor custom events,
+   so the funnel is counted in our own database: one row per day, entry point and event. */
+export function reportTally(event, source) {
+ try {
+  const payload = JSON.stringify({event, source});
+  if (navigator.sendBeacon?.('/api/ranking?action=tally', new Blob([payload], {type: 'application/json'}))) return;
+  fetch('/api/ranking?action=tally', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: payload, keepalive: true}).catch(() => {});
+ } catch {}
+}
