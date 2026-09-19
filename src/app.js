@@ -21,6 +21,7 @@ import {load,save,freshSlot} from './save.js';
 import {rateRun,starText,formatTime,goalText,betterRecord,totalStars,chapterStars,MAX_STARS} from './stars.js';
 import {createSnapshot} from './share-model.js';
 import {openShareDialog,reportShareEvent} from './sharing.js';
+import {trackEvent,entrySource,SOURCE_SLUG} from './analytics.js';
 /* Replaced by scripts/build.mjs with the package.json version. */
 const APP_VERSION='__VERSION__';
 const versionLabel=()=>`${APP_VERSION.startsWith('0.')?'PROTOTYPE ':'Ver. '}${APP_VERSION}`;
@@ -37,7 +38,7 @@ window.addEventListener('online',()=>void rankings.flush());void rankings.flush(
 let rankingStarting=false,pendingScene=null;
 // A visitor from a share page is counted once, when they create their first workshop.
 /* ?via=share&kind=… comes from a share landing page; ?via=<slug> (x, note, itch…) marks a campaign link. Both are logged as counts only and stripped from the address bar. */
-let arrivedViaShare=null,arrivedFrom='';try{const params=new URL(location.href).searchParams,via=params.get('via');if(via==='share')arrivedViaShare=params.get('kind')||'title';else if(via&&/^[a-z-]{1,24}$/.test(via)){arrivedFrom=via;reportShareEvent('visit','title',via);}if(via!==null)history.replaceState(null,'',location.pathname);}catch{}
+let arrivedViaShare=null,arrivedFrom='',arrivedSource=entrySource(location.href);try{const url=new URL(location.href),params=url.searchParams,via=params.get('via');if(via==='share')arrivedViaShare=params.get('kind')||'title';else if(via&&SOURCE_SLUG.test(via)){arrivedFrom=via;reportShareEvent('visit','title',via);}if(via!==null){params.delete('via');params.delete('kind');const rest=params.toString();history.replaceState(null,'',url.pathname+(rest?'?'+rest:''));}}catch{}
 const $=s=>document.querySelector(s);
 const button=(text,action,cls='')=>`<button class="${cls}" data-action="${action}">${text}</button>`;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -68,7 +69,7 @@ function deleteSlot(){
  data=next;slots();toast(`工房 ${index+1} のデータを消しました`);
  app.querySelector(`[data-action="slot:${index}"]`).focus();
 }
-function openSlot(i){slot=i;if(!data.slots[slot]){data.slots[slot]=freshSlot();persist();if(arrivedViaShare){reportShareEvent('start',arrivedViaShare,'landing');arrivedViaShare=null;}else if(arrivedFrom){reportShareEvent('start','title',arrivedFrom);arrivedFrom='';}map();opening();}else{map();if(voyageUnlocked(data.slots[slot]))return;const next=stages.find(t=>!data.slots[slot].cleared.includes(t.id))||stages[29];showChapterScene(next.chapter,{resume:true,onNext:()=>{}});}}
+function openSlot(i){slot=i;if(!data.slots[slot]){data.slots[slot]=freshSlot();persist();trackEvent('start',{from:arrivedSource});if(arrivedViaShare){reportShareEvent('start',arrivedViaShare,'landing');arrivedViaShare=null;}else if(arrivedFrom){reportShareEvent('start','title',arrivedFrom);arrivedFrom='';}map();opening();}else{map();if(voyageUnlocked(data.slots[slot]))return;const next=stages.find(t=>!data.slots[slot].cleared.includes(t.id))||stages[29];showChapterScene(next.chapter,{resume:true,onNext:()=>{}});}}
 function conversation(story,done=()=>{},options={}){const g=game;if(g)g.paused=true;pointer=null;soundtrack.duck('story',true);showDialogue(story,()=>{soundtrack.duck('story',false);last=performance.now();if(game===g&&g&&!g.over)g.paused=false;done();},options);}
 function unlocked(i){return i===0||data.slots[slot]?.cleared.includes(i-1);}
 const chapterIcon=n=>`<i class="chapter-art" aria-hidden="true" style="--icon-x:${n%3*50}%;--icon-y:${Math.floor(n/3)*100}%"></i>`;
