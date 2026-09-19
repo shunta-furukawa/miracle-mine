@@ -67,3 +67,51 @@ test('cards render as 1200×630 PNG with bundled Japanese font',async()=>{
   assert.equal(meta.format,'png');assert.equal(meta.width,1200);assert.equal(meta.height,630);assert.ok(png.length>50000&&png.length<1500000,'size '+png.length);
  }
 });
+
+import {boardCardElement,BOARD_W,BOARD_H,BOARD_TOP,renderBoardCard} from '../server/share-card.js';
+
+const shareGet = query => handleShare({method:'GET',headers:{}}, new URL('https://miracle-mine.vercel.app/api/share'+query));
+
+test('board=1 asks for the live leaderboard card instead of decoding a snapshot',()=>{
+ const plain = shareGet('?board=1');
+ assert.deepEqual(plain.board, {season:''});
+ assert.equal(plain.headers['Content-Type'], 'image/png');
+ // Short cache: the leaderboard changes, unlike the immutable per-plane cards.
+ assert.match(plain.headers['Cache-Control'], /max-age=300/);
+ assert.deepEqual(shareGet('?board=1&season=2').board, {season:'2'});
+ // Everything else keeps its existing behaviour.
+ assert.equal(shareGet('?board=0').board, undefined);
+ assert.equal(shareGet('').board, undefined);
+});
+
+const sampleBoard = count => ({season:{id:2,name:'気まぐれな気流'},entries:Array.from({length:count},(_,i)=>({
+ rank:i+1, name:`ひこうき${i+1}`, distance:9000-i*700, design:{wing:i%3,paint:i%3,propeller:i%3,decoration:i%3}}))});
+
+test('the leaderboard card lays out one column up to five planes and two beyond',async()=>{
+ const one = await boardCardElement(sampleBoard(4),'9月19日');
+ const two = await boardCardElement(sampleBoard(9),'9月19日');
+ const lanes = el => el.props.children[2].props.children[1].props.children;
+ assert.equal(lanes(one).length, 1);
+ assert.equal(lanes(two).length, 2);
+ assert.deepEqual(lanes(two).map(l=>l.props.children.length), [5,4]);
+});
+
+test('the leaderboard card stops at ten planes and masks a name that fails the screen',async()=>{
+ const many = sampleBoard(14);
+ many.entries[1].name = 'ちんちん号';
+ const el = await boardCardElement(many,'9月19日');
+ const lanes = el.props.children[2].props.children[1].props.children;
+ const rows = lanes.flatMap(l=>l.props.children);
+ assert.equal(rows.length, BOARD_TOP);
+ const names = rows.map(r=>r.props.children[2].props.children);
+ assert.ok(!names.some(n=>String(n).includes('ちんちん')));
+ assert.ok(names.includes('なまえのない飛行機'));
+});
+
+test('an empty board still renders a landscape card',async()=>{
+ const png = await renderBoardCard({season:{name:'気まぐれな気流'},entries:[]},'9月19日');
+ const meta = await sharp(png).metadata();
+ assert.equal(meta.width, BOARD_W);
+ assert.equal(meta.height, BOARD_H);
+ assert.equal(BOARD_W/BOARD_H, 16/9);
+});

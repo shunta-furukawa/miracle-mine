@@ -1,5 +1,5 @@
 import {decodeShare,shareCopy,shareUrl,shareImageUrl,kinds,shareEvents,normalizeSnapshot,SITE} from '../src/share-model.js';
-import {renderShareCard} from '../server/share-card.js';
+import {renderShareCard,renderBoardCard} from '../server/share-card.js';
 
 /* Public share cards. The URL carries only the public snapshot (see docs/SHARING.md); nothing is stored. */
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -21,6 +21,8 @@ export function handleShare(req,url,{body}={}){
   return {status:204,headers:{'Cache-Control':'no-store'}};
  }
  if(req.method!=='GET'&&req.method!=='HEAD')return {status:405,headers:{'Cache-Control':'no-store'},json:{error:'METHOD'}};
+ // The weekly leaderboard image. The data is fetched live by the handler, so the card cannot be forged from the URL.
+ if(url.searchParams.get('board')==='1')return {status:200,headers:{'Content-Type':'image/png','Cache-Control':'public, max-age=300, s-maxage=900'},board:{season:url.searchParams.get('season')||''}};
  const code=url.searchParams.get('s');
  const snapshot=code?decodeShare(code):normalizeSnapshot({kind:'title'});
  if(!snapshot)return {status:400,headers:{'Cache-Control':'no-store','Content-Type':'text/plain; charset=utf-8'},text:'この共有リンクは読み取れませんでした。'};
@@ -35,6 +37,13 @@ export default async function handler(req,res){
   if(result.json)return res.status(result.status).json(result.json);
   if(result.text)return res.status(result.status).send(result.text);
   if(result.html)return res.status(result.status).send(result.html);
+  if(result.board){
+   const q=result.board.season?`&season=${encodeURIComponent(result.board.season)}`:'';
+   const r=await fetch(`${SITE}/api/ranking?action=board${q}`,{cache:'no-store'});
+   if(!r.ok)throw new Error(`ranking board → ${r.status}`);
+   const jst=new Date(Date.now()+9*3600e3);
+   return res.status(result.status).send(await renderBoardCard(await r.json(),`${jst.getUTCFullYear()}年${jst.getUTCMonth()+1}月${jst.getUTCDate()}日`));
+  }
   if(result.image)return res.status(result.status).send(await renderShareCard(result.image));
   return res.status(result.status).end();
  }catch(e){

@@ -6,6 +6,7 @@ import {ImageResponse} from '@vercel/og';
 import {normalizeSnapshot,shareCopy,planeName,fmt} from '../src/share-model.js';
 import {assemblyNames} from '../src/airplane.js';
 import {treasures} from '../src/sky-voyage.js';
+import {nameAllowed,HIDDEN_NAME} from '../src/name-filter.js';
 
 /* 1200×630 share cards drawn from the game's own sprite sheets. The bundled Noto Sans JP Bold
    (SIL OFL, see server/assets/OFL.txt) avoids any font download at request time. */
@@ -55,7 +56,7 @@ export const planeImage=(level,design,background='#fff8e9')=>memo(`plane:${level
  }
  return sharp({create:{width:PLANE_W,height:PLANE_H,channels:3,background}}).composite(layers).png().toBuffer();
 });
-const scenery=name=>memo('scene:'+name,async()=>dataUri(await sharp(await asset(name)).resize(WIDTH,HEIGHT,{fit:'cover'}).jpeg({quality:72}).toBuffer(),'image/jpeg'));
+const scenery=(name,w=WIDTH,h=HEIGHT)=>memo(`scene:${name}:${w}x${h}`,async()=>dataUri(await sharp(await asset(name)).resize(w,h,{fit:'cover'}).jpeg({quality:72}).toBuffer(),'image/jpeg'));
 /* Character-free scenery cells (workshop, forest, harbor, cavern, forge, sky) so the card panel never covers the cast. */
 const worldScene=cell=>memo('world:'+cell,async()=>dataUri(await sharp(await asset('dialogue-worlds.webp')).extract({left:cell%3*724,top:Math.floor(cell/3)*362,width:724,height:362}).resize(WIDTH,HEIGHT,{fit:'cover'}).jpeg({quality:78}).toBuffer(),'image/jpeg'));
 const logo=()=>memo('logo',async()=>dataUri(await sharp(await asset('title-logo.webp')).resize({width:540}).png().toBuffer()));
@@ -104,5 +105,55 @@ export async function renderShareCard(value){
  const element=await shareCardElement(value);
  const response=new ImageResponse(element,{width:WIDTH,height:HEIGHT,fonts:[{name:'Noto Sans JP',data:await fontData(),weight:700,style:'normal'}]});
  // resvg writes an uncompressed PNG; re-encode so OGP crawlers fetch a few hundred kilobytes.
+ return sharp(Buffer.from(await response.arrayBuffer())).png({compressionLevel:9,adaptiveFiltering:true,palette:true,colours:256,dither:0.8}).toBuffer();
+}
+
+/* Weekly leaderboard card: a landscape image of the top ten for the X post.
+   Ranking planes are always fully assembled, so every row draws the level 5 airframe. */
+export const BOARD_W=1600,BOARD_H=900,BOARD_TOP=10;
+const ROW_PLANE_W=150,ROW_PLANE_H=75;
+export async function boardCardElement(board,date=''){
+ const ink='#fff8e6',gold='#f6d27a',panel='#fff8e9';
+ const entries=(board?.entries||[]).slice(0,BOARD_TOP);
+ const columns=entries.length>5?2:1,perColumn=Math.ceil(entries.length/columns)||1;
+ // Plain numerals keep every row the same weight; the top three are told apart by colour, not by an emoji of another size.
+ const rankInk=['#f6d27a','#e4e7ec','#e0a46a'];
+ const rows=[];
+ for(const e of entries){
+  const plane=dataUri(await planeImage(5,e.design||{paint:0,wing:0,propeller:0,decoration:0},panel));
+  // The board endpoint already masks names that fail the screen; mask again here so nothing unscreened can reach a public post.
+  const name=nameAllowed(e.name)?e.name:HIDDEN_NAME;
+  const nameSize=columns===1?34:name.length>11?20:name.length>9?24:name.length>7?27:30;
+  rows.push(h('div',{display:'flex',alignItems:'center',height:96,marginBottom:12,paddingRight:16,borderRadius:20,
+    background:e.rank<=3?'rgba(246,210,122,0.16)':'rgba(255,248,230,0.08)',border:`2px solid ${e.rank<=3?'rgba(246,210,122,0.65)':'rgba(255,248,230,0.18)'}`},[
+   text(`${e.rank}`,{width:88,fontSize:e.rank<=3?46:38,color:rankInk[e.rank-1]||ink,justifyContent:'center',alignItems:'center'}),
+   h('div',{display:'flex',width:ROW_PLANE_W+16,justifyContent:'center'},[{type:'img',props:{src:plane,width:ROW_PLANE_W,height:ROW_PLANE_H,style:{borderRadius:10}}}]),
+   text(name,{flexGrow:1,fontSize:nameSize,lineHeight:1.2,marginLeft:14,paddingRight:12,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}),
+   text(`${Number(e.distance||0).toLocaleString('en-US')} m`,{fontSize:32,color:gold,justifyContent:'flex-end',whiteSpace:'nowrap'})
+  ]));
+ }
+ const columnWidth=columns===2?710:1460;
+ const lanes=[];
+ for(let c=0;c<columns;c++)lanes.push(h('div',{display:'flex',flexDirection:'column',width:columnWidth,marginRight:c===0&&columns===2?40:0},rows.slice(c*perColumn,(c+1)*perColumn)));
+ return h('div',{display:'flex',width:BOARD_W,height:BOARD_H,position:'relative',fontFamily:'Noto Sans JP',color:ink},[
+  {type:'img',props:{src:await scenery('sky-world.webp',BOARD_W,BOARD_H),width:BOARD_W,height:BOARD_H,style:{position:'absolute',top:0,left:0,objectFit:'cover'}}},
+  h('div',{position:'absolute',top:0,left:0,width:BOARD_W,height:BOARD_H,background:'linear-gradient(180deg, rgba(10,38,44,0.95) 0%, rgba(10,38,44,0.88) 55%, rgba(10,38,44,0.94) 100%)'},undefined),
+  h('div',{display:'flex',flexDirection:'column',position:'absolute',top:0,left:0,width:BOARD_W,height:BOARD_H,padding:'52px 70px 44px'},[
+   h('div',{display:'flex',alignItems:'flex-end',justifyContent:'space-between',marginBottom:30},[
+    h('div',{display:'flex',flexDirection:'column'},[
+     text('MIRACLE MINE ・ 空の旅ランキング',{fontSize:26,letterSpacing:6,color:gold}),
+     text(`シーズン「${board?.season?.name||''}」`,{fontSize:52,lineHeight:1.2,marginTop:12,textShadow:'0 4px 14px rgba(0,0,0,0.45)'})
+    ]),
+    text(date,{fontSize:30,color:'#ffeec9'})
+   ]),
+   entries.length?h('div',{display:'flex'},lanes):text('まだ記録がありません',{fontSize:40,justifyContent:'center',marginTop:120}),
+   h('div',{display:'flex',flexGrow:1},undefined),
+   text('miracle-mine.vercel.app ・ 無料で遊べる数字パズル',{fontSize:26,color:gold})
+  ])
+ ]);
+}
+export async function renderBoardCard(board,date=''){
+ const element=await boardCardElement(board,date);
+ const response=new ImageResponse(element,{width:BOARD_W,height:BOARD_H,fonts:[{name:'Noto Sans JP',data:await fontData(),weight:700,style:'normal'}]});
  return sharp(Buffer.from(await response.arrayBuffer())).png({compressionLevel:9,adaptiveFiltering:true,palette:true,colours:256,dither:0.8}).toBuffer();
 }
