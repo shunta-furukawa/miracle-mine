@@ -45,3 +45,13 @@ Actions → x-weekly → Run workflow。
 - 投稿スクリプトは `boardCardUrl()` でこの URL を取得する。`--sample` のときだけ従来の 1 位カードを使う。
 - 本文は 1 位だけを書き、残りは画像に任せる（`weeklyText`）。
 - 名前は `/api/ranking` 側でマスク済みだが、カード描画でも `nameAllowed` を通して二重に守る。
+
+## 2026-09-19 の失敗と対策
+
+初回の定期実行（土 20:30 JST 予定 → 実際は 23:39 JST に約 3 時間遅れて発火）が失敗した。
+
+原因: そのときまだ `board=1` を本番にデプロイしていなかったため、`/api/share?board=1` が 200 のままランディング HTML（3,967 バイト）を返し、それを `image/png` として X にアップロードして `POST /2/media/upload → 400` になった。
+
+対策: `assertPng` を追加し、PNG のマジックバイトを確認してからアップロードする。ずれていればその場で、バイト数と content-type と URL を添えて止まる。X の不透明な 400 を追わずに済む。
+
+スケジュール発火の遅れは GitHub Actions 側の挙動で、こちらでは直せない。確実性が要るなら Vercel Cron から叩く構成に変える。

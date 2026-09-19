@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {oauthHeader,weeklyText,weightOf,cardUrlFor,credsFromEnv,boardCardUrl,BOARD_TOP} from '../scripts/x-post.mjs';
+import {oauthHeader,weeklyText,weightOf,cardUrlFor,credsFromEnv,boardCardUrl,BOARD_TOP,assertPng} from '../scripts/x-post.mjs';
 
 test('OAuth 1.0a signature matches the reference example from the X documentation',()=>{
  const header=oauthHeader({method:'POST',url:'https://api.twitter.com/1.1/statuses/update.json',params:{include_entities:'true',status:'Hello Ladies + Gentlemen, a signed OAuth request!'},
@@ -33,4 +33,14 @@ test('the card URL is a rank card for the leader and credentials are validated',
  assert.equal(boardCardUrl(2),'https://miracle-mine.vercel.app/api/share?board=1&season=2');
  assert.equal(BOARD_TOP,10);
  assert.throws(()=>credsFromEnv({X_API_KEY:'a'}),/missing credentials: X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET/);
+});
+
+test('the card image is checked before it is handed to X',()=>{
+ const png=Buffer.concat([Buffer.from('89504e470d0a1a0a','hex'),Buffer.from('rest')]);
+ assert.equal(assertPng(png,'https://example.test/card','image/png'),png);
+ // The 2026-09-19 failure: the board route was not deployed yet, so the endpoint answered 200 with the landing page.
+ const html=Buffer.from('<!doctype html><html lang="ja">…');
+ assert.throws(()=>assertPng(html,'https://example.test/card','text/html; charset=utf-8'),
+  /not a PNG: 3\d bytes, content-type text\/html; charset=utf-8, from https:\/\/example\.test\/card/);
+ assert.throws(()=>assertPng(Buffer.alloc(0),'https://example.test/card',null),/content-type none/);
 });
