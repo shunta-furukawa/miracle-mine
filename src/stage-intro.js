@@ -2,7 +2,7 @@ import {skyChapter,voyageRegion} from './sky-voyage.js';
 import {chapters} from './data.js';
 import {starGoal,starText,formatTime} from './stars.js';
 export function stageBrief(stage,{mode='story',resume=false,remaining=stage.count,record=null}={}){
- if(mode==='sky')return {chapter:skyChapter,label:'SECRET CHAPTER 06',name:skyChapter.name,target:stage.target,goal:`「${voyageRegion(stage).label}」から、完成した数字の分だけ空を進もう`,hint:'同じ石をダブルタップで＋と×を切り替え'};
+ if(mode==='sky')return {chapter:skyChapter,label:'SKY VOYAGE',name:skyChapter.subtitle,target:stage.target,goal:`「${voyageRegion(stage).label}」から、完成した数字の分だけ空を進もう`,hint:'同じ石をダブルタップで＋と×を切り替え'};
  const story=mode==='story';
  return {chapter:chapters[stage.chapter],label:story?`STAGE ${stage.chapter+1}-${stage.step+1}`:mode==='score'?'SCORE ATTACK':'ENDLESS',
   name:story?stage.name:mode==='score'?'3分間のチャレンジ':'終わらない冒険',target:stage.target,
@@ -21,7 +21,7 @@ export function showStageIntro(stage,options={}){
  const root=document.createElement('dialog');root.className='stage-intro'+(options.mode==='sky'?' sky-intro':'');root.setAttribute('aria-labelledby','stage-intro-name');
  root.style.setProperty('--intro-color',brief.chapter.color);
  root.innerHTML=`<section class="stage-intro-card"><div class="intro-rays" aria-hidden="true"></div><p class="intro-chapter"></p><p class="intro-stage"></p><h2 id="stage-intro-name"></h2><div class="intro-rule" aria-hidden="true"></div><div class="intro-goal"><span class="intro-goal-label">つくる数字</span><strong></strong><span class="intro-count"></span></div><p class="intro-hint"></p><div class="intro-stars"></div><button class="intro-start">${options.resume?'冒険をつづける':'はじめる'} ▸</button><p class="intro-note">準備ができたら、出発しよう</p></section>`;
- root.querySelector('.intro-chapter').textContent=`第${options.mode==='sky'?6:stage.chapter+1}章 · ${brief.chapter.name}`;
+ root.querySelector('.intro-chapter').textContent=options.mode==='sky'?skyChapter.name:`第${stage.chapter+1}章 · ${brief.chapter.name}`;
  root.querySelector('.intro-stage').textContent=options.resume?'READY TO CONTINUE':brief.label;
  root.querySelector('h2').textContent=brief.name;root.querySelector('.intro-goal strong').textContent=brief.target;
  root.querySelector('.intro-count').textContent=brief.goal;root.querySelector('.intro-hint').textContent=brief.hint;const starsLine=root.querySelector('.intro-stars');starsLine.innerHTML=brief.stars?starRows(brief.stars):'';starsLine.hidden=!brief.stars;

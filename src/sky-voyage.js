@@ -1,5 +1,5 @@
 import {adjacent,evaluate} from './engine.js';
-export const skyChapter={name:'トトじいと空の旅',guardian:'トトじい',color:'#53b6c5',material:'空の秘宝',part:'完成した蒸気飛行機'};
+export const skyChapter={name:'空の旅',subtitle:'トトじいと、どこまでも',guardian:'トトじい',color:'#53b6c5',material:'空の秘宝',part:'完成した蒸気飛行機'};
 export const treasures=[
  {name:'翼の歯車',at:300,text:'空の遺跡から届いた、最初の贈りもの。'},
  {name:'雲の結晶',at:4000,text:'朝の雲を閉じこめた、澄んだ青い結晶。'},
