@@ -40,4 +40,4 @@ test('regions name each tier, count progress and number repeat laps of the far s
  const lap2=voyageRegion(voyageStage(3,90));assert.equal(lap2.label,'果ての空 Ⅱ');assert.equal(lap2.lap,2);assert.equal(lap2.position,0);assert.equal(voyageRegion(voyageStage(3,149)).label,'果ての空 Ⅲ');
  assert(!JSON.stringify(SKY_REGIONS).match(/[0-9０-９]つの石|枚/));
 });
-test('sky intro names the region and distance without an infinite count or a stone count',()=>{const b=stageBrief(voyageStage(3,0),{mode:'sky'});assert.equal(b.target,voyageGoal(3,0).target);assert.equal(b.label,'SECRET CHAPTER 06');assert.match(b.goal,/雲の海/);assert(!/つの石/.test(b.goal));assert.match(b.hint,/＋と×/);assert(!JSON.stringify(b).includes('Infinity'))});
+test('sky intro names the region and distance without an infinite count or a stone count',()=>{const b=stageBrief(voyageStage(3,0),{mode:'sky'});assert.equal(b.target,voyageGoal(3,0).target);assert.equal(b.label,'SKY VOYAGE');assert.match(b.goal,/雲の海/);assert(!/つの石/.test(b.goal));assert.match(b.hint,/＋と×/);assert(!JSON.stringify(b).includes('Infinity'))});

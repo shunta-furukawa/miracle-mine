@@ -71,7 +71,7 @@ export function shareCopy(value){
   case 'flight':
    Object.assign(copy,{title:`蒸気飛行機「${plane}」完成！｜${site}`,headline:`蒸気飛行機「${plane}」完成！`,caption:'5つの部品をあつめて、おじいちゃんと初飛行へ。',chips:['部品 5 / 5','30 ステージ クリア'],description:`5つの部品をあつめて蒸気飛行機が完成。${intro}`,text:`Miracle Mine で蒸気飛行機「${plane}」が完成！ 5つの部品をあつめて、おじいちゃんと初飛行へ ${tag}`,scene:'sky'});break;
   case 'sky':
-   Object.assign(copy,{title:`「${plane}」で空の旅へ｜${site}`,headline:`「${plane}」で、空の旅へ出発！`,caption:`第6章 トトじいと空の旅・最長 ${fmt(s.best??0)} m`,chips:[`最長 ${fmt(s.best??0)} m`,`累計 ${fmt(s.total??0)} m`],description:`隠し第6章「トトじいと空の旅」。最長 ${fmt(s.best??0)} m。${intro}`,text:`Miracle Mine 第6章「トトじいと空の旅」に「${plane}」で出発！ 最長 ${fmt(s.best??0)} m ${tag}`,scene:'sky'});break;
+   Object.assign(copy,{title:`「${plane}」で空の旅へ｜${site}`,headline:`「${plane}」で、空の旅へ出発！`,caption:`空の旅 ― トトじいと、どこまでも・最長 ${fmt(s.best??0)} m`,chips:[`最長 ${fmt(s.best??0)} m`,`累計 ${fmt(s.total??0)} m`],description:`新たな冒険「空の旅 ― トトじいと、どこまでも」。最長 ${fmt(s.best??0)} m。${intro}`,text:`Miracle Mine 「空の旅 ― トトじいと、どこまでも」に「${plane}」で出発！ 最長 ${fmt(s.best??0)} m ${tag}`,scene:'sky'});break;
   case 'voyage':
    Object.assign(copy,{title:`空の旅で ${fmt(s.distance)} m 飛んだ！｜${site}`,headline:`${fmt(s.distance)} m 飛んだ！`,caption:`「${plane}」の空の旅・最長 ${fmt(s.best??s.distance)} m`,chips:[`今回 ${fmt(s.distance)} m`,`最長 ${fmt(s.best??s.distance)} m`],description:`「${plane}」で空の旅 ${fmt(s.distance)} m。${intro}`,text:`Miracle Mine の空の旅で「${plane}」が ${fmt(s.distance)} m 飛んだ！ 最長 ${fmt(s.best??s.distance)} m ${tag}`,scene:'sky'});break;
   case 'treasure':{const names=s.treasures.map(i=>treasures[i].name);
