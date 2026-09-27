@@ -7,6 +7,9 @@ const read=p=>readFile(new URL('../'+p,import.meta.url),'utf8');
 test('the about page carries the contact, privacy and credit sections and the version placeholder',async()=>{
  const html=await read('src/about.html');
  for(const needle of ['@MiracleMine0123','id="privacy"','id="contact"','id="developer"','id="credits"','id="terms"','__VERSION__','CC BY 4.0','Kenney','数字と遊ぶ感覚'])assert.ok(html.includes(needle),needle);
+ assert.ok(html.includes('id="maker"')&&html.includes('href="https://shunta-furukawa.info/works/?from=miracle-mine"'),'maker section links the portfolio with a source tag');
+ assert.ok(html.includes('href="https://miracle-clock.vercel.app/"'),'the sequel is listed');
+ assert.ok(!/外部サイトへ誘導する仕組みもありません/.test(html),'privacy note does not deny the external links on this page');
  assert.ok(!/0\.\d+\.\d+/.test(html.replace(/CC BY 4\.0|1\.1/g,'')),'no hard-coded version');
 });
 test('the app reads its version from the build instead of a literal',async()=>{
