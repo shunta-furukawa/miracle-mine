@@ -12,7 +12,7 @@
 
 `RTCPeerConnection` + an unordered, zero-retransmit data channel carries bounded, sequenced snapshots (board, trace, operation, progress and finish flags). Drag updates are throttled and a one-second heartbeat detects stale peers. Invalid, stale, oversized and unrelated payloads are ignored. Snapshots are display only; the server validates the final operation transcript independently.
 
-Nontrickle SDP is exchanged once through `/api/online`; room state is polled about every 2.5 seconds while waiting and every 2 seconds while confirming results. Active play does not poll or send moves to the server. Both players submit a final transcript; the other player gets a 1.5-second close-finish window after receiving a completion snapshot. Rounds are bounded at three minutes and 300 moves.
+Nontrickle SDP is exchanged once through `/api/online`; gathering is bounded and can proceed with already gathered candidates if STUN is slow. A candidate is only a possible route, not a connection guarantee. Room state is polled about every 2.5 seconds while waiting and every 2 seconds while confirming results. Active play does not poll or send moves to the server. Both players submit a final transcript; the other player gets a 1.5-second close-finish window after receiving a completion snapshot. Rounds are bounded at three minutes and 300 moves.
 
 Reloading a live round cannot resume it. Fixed SDP is not reused for a new RTC peer; create a new room after a reload. Leaving, sustained disconnection, or being hidden/stale for eight seconds produces a no-contest outcome. A room URL in the fragment carries only an unguessable room UUID, never participant credentials. Share it only with a trusted person.
 

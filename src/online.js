@@ -121,8 +121,22 @@ export class OnlineRoom{
   pc.onconnectionstatechange=()=>{if(!this.alive||this.pc!==pc||this.terminal)return;if(['disconnected','failed','closed'].includes(pc.connectionState))this.markDisconnected();};
  }
  gatherICE(){
-  const pc=this.pc;if(pc.iceGatheringState==='complete')return Promise.resolve();
-  return new Promise((resolve,reject)=>{let settled=false;const end=error=>{if(settled)return;settled=true;pc.removeEventListener('icegatheringstatechange',changed);clearTimeout(timeout);this.iceCancel=null;error?reject(error):resolve();};const changed=()=>{if(pc.iceGatheringState==='complete')end();};const timeout=setTimeout(()=>end(new Error('ICE_TIMEOUT')),12000);this.iceCancel=()=>end(new Error('DISPOSED'));pc.addEventListener('icegatheringstatechange',changed);});
+  const pc=this.pc;
+  const hasCandidate=()=>/^a=candidate:\S[^\r\n]+/m.test(pc.localDescription?.sdp||'');
+  if(pc.iceGatheringState==='complete')return hasCandidate()?Promise.resolve():Promise.reject(new Error('ICE_TIMEOUT'));
+  return new Promise((resolve,reject)=>{
+   let settled=false;
+   const end=error=>{if(settled)return;settled=true;pc.removeEventListener('icegatheringstatechange',changed);clearTimeout(timeout);this.iceCancel=null;error?reject(error):resolve();};
+   // Public STUN may remain pending even when usable host candidates are ready.
+   // Send the gathered SDP once after at most 8 seconds; never alter ICE policy or
+   // invent candidates. Two such waits plus lobby polls fit the connection deadline.
+   const gathered=()=>end(hasCandidate()?null:new Error('ICE_TIMEOUT'));
+   const changed=()=>{if(pc.iceGatheringState==='complete')gathered();};
+   const timeout=setTimeout(gathered,8000);
+   this.iceCancel=()=>end(new Error('DISPOSED'));
+   pc.addEventListener('icegatheringstatechange',changed);
+   if(pc.iceGatheringState==='complete')gathered();
+  });
  }
  attachChannel(channel){
   this.channel=channel;channel.onopen=()=>{if(!this.alive||this.channel!==channel)return;this.lastPeerAt=performance.now();this.disconnectedAt=0;this.cancelTimer(this.connectionTimer);this.connectionTimer=null;if(this.ui==='lobby')this.renderLobby();this.heartbeat();};

@@ -130,8 +130,8 @@ async function start(host,guest){
  const initial=createRound(hostView.seed);
  expect(await boardDigits(localBoard(host.page))).toEqual(initial.board);
  expect(await boardDigits(localBoard(guest.page))).toEqual(initial.board);
- expect(await boardDigits(peerBoard(host.page))).toEqual(initial.board);
- expect(await boardDigits(peerBoard(guest.page))).toEqual(initial.board);
+ await expect.poll(()=>boardDigits(peerBoard(host.page))).toEqual(initial.board);
+ await expect.poll(()=>boardDigits(peerBoard(guest.page))).toEqual(initial.board);
  await Promise.all([visible(host),visible(guest)]);
  return initial;
 }
@@ -193,6 +193,11 @@ test('unlock, story, disclosure and direct mobile exit never connect without con
 test('native desktop/mobile peers exchange operations, traces and boards, then validate a result and a new room',async({browser})=>{
  await withPlayers(browser,async(host,guest)=>{
   const firstInvite=await room(host,guest),initial=await start(host,guest),winningPath=solutionPair(initial),path=preparation(initial,winningPath);
+  const mobileLayout=await guest.page.evaluate(()=>({width:innerWidth,content:document.documentElement.scrollWidth}));
+  expect(mobileLayout.width).toBe(390);expect(mobileLayout.content).toBeLessThanOrEqual(390);
+  const mine=await localBoard(guest.page).boundingBox(),theirs=await peerBoard(guest.page).boundingBox();
+  expect(mine.x+mine.width).toBeLessThan(theirs.x);expect(theirs.x+theirs.width).toBeLessThanOrEqual(390);
+  expect((await action(guest.page,'op:+').boundingBox()).height).toBeGreaterThanOrEqual(44);
   const pollCounts=[host,guest].map(p=>p.requests.filter(r=>r.action==='poll').length);
   await selectKeyboard(host,path,'×');
   await expect.poll(()=>selected(peerBoard(guest.page))).toEqual(path);
