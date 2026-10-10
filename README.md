@@ -32,14 +32,11 @@ Vercel Web Analytics is loaded from `/_vercel/insights/script.js` on both pages 
 
 ## Continuous integration and deployment
 
-`.github/workflows/test.yml` runs `npm ci`, `npm test` and `npm run build` on every pull request and push to `main`. Production is deployed manually from a specific `main` commit; see [docs/DEPLOY.md](docs/DEPLOY.md).
+`.github/workflows/test.yml` runs `npm ci`, `npm test`, `npm run build` and real two-client Chromium WebRTC tests on every pull request and push to `main`. Browser tests use an ephemeral local PGlite database, not production credentials. Production is deployed manually from a specific `main` commit; see [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Vercel
 
-Import this GitHub repository as a Vercel project.
-Framework: Other. Build command: `npm run build`. Output directory: `dist`.
-No environment variables or paid services are required by this scaffold.
-Production branch: `main`. Git integration must be enabled in Vercel for automatic deployments.
+The existing `miracle-mine` project uses Framework: Other, output directory `dist`, and the exact-commit bootstrap in [docs/DEPLOY.md](docs/DEPLOY.md). Git integration is not enabled. Ranking and online room APIs use the already provisioned production `DATABASE_URL` for Neon; local offline play does not require it. No new service is provisioned by the online prototype.
 
 ## Prototype limitations
 

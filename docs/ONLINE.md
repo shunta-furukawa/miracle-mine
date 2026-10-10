@@ -45,6 +45,15 @@ npm run build
 npm run preview:online
 ```
 
+For the real browser integration suite (requires a normal Chromium-capable environment):
+
+```
+npx playwright install --with-deps chromium
+npm run test:browser
+```
+
+The Playwright suite starts the local preview server and runs two independent browser contexts. It does not mock `RTCPeerConnection` or disable browser/network protections. A same-runner ICE connection tests the application handshake and DataChannel behavior, not carrier NAT traversal or real-device compatibility.
+
 The preview command uses an ephemeral PGlite database for both APIs, with no production connection. Do not use it for hosted production. The production handler remains `api/online.js` with Neon. `scripts/deploy-payload.mjs` includes every API entrypoint, and `/build-info.json` identifies the source SHA. Follow [DEPLOY.md](DEPLOY.md).
 
 Unit/integration tests cover deterministic solvability, replay integrity, save unlock/nonmutation, protocol payloads, idempotency, slot/race allocation, authorization, early results, clock/arrival ambiguity, expiration, disconnects, and request limits. Release-specific browser/device coverage and any remaining limits belong in the release report. Desktop Chromium or narrow CSS viewport tests do not establish actual iPhone Safari, cellular, Wi-Fi-to-cellular, background-suspension or TURN behavior.
