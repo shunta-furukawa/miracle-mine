@@ -9,6 +9,10 @@ Steampunk number puzzle adventure.
 Released 1.0.0 on 2026-09-17 at https://miracle-mine.vercel.app. 30 story stages, three local save slots, score attack, endless mode, the hidden sky voyage chapter with a seasonal leaderboard, share cards, and an installable offline PWA.
 See [game design](docs/game-design.md) for the approved prototype scope.
 
+## Online versus (1.1 prototype)
+
+After any of the three local workshops clears all 30 stages, the title screen unlocks an invite-link, two-player online mode. Both players solve the same target on identical seeded starting boards and replenishment streams; local play never waits for network replies. The opponent’s board and trace are displayed live over a WebRTC data channel. Rooms and replay-validated, unranked outcomes use the existing Neon connection, isolated from saves and rankings. A short, replayable Toto/Luka introduction explains the new mode. See [online mode](docs/ONLINE.md) for privacy, failure handling, operational limits and QA.
+
 ## Development
 
 Node.js 22 or later. Runtime dependencies are used only by the Vercel Functions (`api/`).
@@ -28,14 +32,11 @@ Vercel Web Analytics is loaded from `/_vercel/insights/script.js` on both pages 
 
 ## Continuous integration and deployment
 
-`.github/workflows/test.yml` runs `npm ci`, `npm test` and `npm run build` on every pull request and push to `main`. Production is deployed manually from a specific `main` commit; see [docs/DEPLOY.md](docs/DEPLOY.md).
+`.github/workflows/test.yml` runs `npm ci`, `npm test`, `npm run build` and real two-client Chromium WebRTC tests on every pull request and push to `main`. Browser tests use an ephemeral local PGlite database, not production credentials. Production is deployed manually from a specific `main` commit; see [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Vercel
 
-Import this GitHub repository as a Vercel project.
-Framework: Other. Build command: `npm run build`. Output directory: `dist`.
-No environment variables or paid services are required by this scaffold.
-Production branch: `main`. Git integration must be enabled in Vercel for automatic deployments.
+The existing `miracle-mine` project uses Framework: Other, output directory `dist`, and the exact-commit bootstrap in [docs/DEPLOY.md](docs/DEPLOY.md). Git integration is not enabled. Ranking and online room APIs use the already provisioned production `DATABASE_URL` for Neon; local offline play does not require it. No new service is provisioned by the online prototype.
 
 ## Prototype limitations
 
