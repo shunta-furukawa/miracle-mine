@@ -9,6 +9,10 @@ Steampunk number puzzle adventure.
 Released 1.0.0 on 2026-09-17 at https://miracle-mine.vercel.app. 30 story stages, three local save slots, score attack, endless mode, the hidden sky voyage chapter with a seasonal leaderboard, share cards, and an installable offline PWA.
 See [game design](docs/game-design.md) for the approved prototype scope.
 
+## Online versus (1.1 prototype)
+
+After any of the three local workshops clears all 30 stages, the title screen unlocks an invite-link, two-player online mode. Both players solve the same target on identical seeded starting boards and replenishment streams; local play never waits for network replies. The opponent’s board and trace are displayed live over a WebRTC data channel. Rooms and replay-validated, unranked outcomes use the existing Neon connection, isolated from saves and rankings. A short, replayable Toto/Luka introduction explains the new mode. See [online mode](docs/ONLINE.md) for privacy, failure handling, operational limits and QA.
+
 ## Development
 
 Node.js 22 or later. Runtime dependencies are used only by the Vercel Functions (`api/`).

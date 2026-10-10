@@ -13,5 +13,6 @@ const head=git('rev-parse','HEAD');if(head!==COMMIT)throw new Error(`fetched ${h
 for(const dir of ['src','server','scripts','api'])await cp(`${work}/${dir}`,dir,{recursive:true,force:true});
 const version=JSON.parse(await readFile(`${work}/package.json`,'utf8')).version;
 await rm(work,{recursive:true,force:true});
+process.env.MM_BUILD_COMMIT=COMMIT;
 await import('./scripts/build.mjs');
 console.log(`Miracle Mine ${version} built from ${COMMIT}`);
